@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Reach Your Baby ❤️</title>
+
+<style>
+body{
+  font-family: Arial, sans-serif;
+  text-align:center;
+  margin:0;
+  padding:20px;
+}
+button{
+  padding:10px 16px;
+  margin:6px;
+  border-radius:10px;
+  border:1px solid #ccc;
+}
+.popup{
+  position:fixed;
+  top:20px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#ff4d6d;
+  color:white;
+  padding:10px 18px;
+  border-radius:20px;
+}
+.hidden{display:none}
+textarea{
+  width:90%;
+  height:80px;
+  border-radius:10px;
+}
+</style>
+</head>
+
+<body>
+
+<h1 id="title">Welcome ❤️</h1>
+<div id="game"></div>
+<div id="popup" class="popup hidden"></div>
+
+<script>
+// ================= BASIC STORAGE =================
+let data = JSON.parse(localStorage.getItem("amanData") || "{}");
+
+function save(key,value){
+  data[key]=value;
+  localStorage.setItem("amanData",JSON.stringify(data));
+}
+
+function popup(msg){
+  const p=document.getElementById("popup");
+  p.innerText=msg;
+  p.classList.remove("hidden");
+  setTimeout(()=>p.classList.add("hidden"),2500);
+}
+
+// ================= LEVEL 1 =================
+function level1(){
+  title.innerText="Question 1";
+  game.innerHTML=`
+  <h3>Who defended Ahmednagar and fought Delhi?</h3>
+  <button onclick="answer1('Razia')">Razia Sultana</button>
+  <button onclick="answer1('Chand')">Chand Bibi</button>
+  <button onclick="answer1('Rani')">Rani Durgavati</button>
+  <button onclick="answer1('Ahilya')">Ahilyabai</button>
+  `;
+}
+
+function answer1(a){
+  if(a==="Chand"){
+    save("History Question","Chand Bibi");
+    game.innerHTML=`
+      <img src="media/introg<br><br>
+      <button onclick="songs()">Next</button>
+    `;
+  }
+}
+
+// ================= SONGS =================
+function songs(){
+  title.innerText="Level 1 – Your Songs";
+  game.innerHTML=`
+  <audio controls src="o><br><br>
+  <audio controls</audio><br><br>
+  <audio controls src="music/song3.mp3utton onclick="video()">Next</button>
+  `;
+}
+
+// ================= VIDEO =================
+function video(){
+  game.innerHTML=`
+  <video width="90%" controls src="media/level1-video.mp4k="level2()">Start Level 2</button>
+  `;
+}
+
+// ================= LEVEL 2 =================
+let rewards=[
+  "forehead kiss",
+  "warm hug",
+  "song by Aman",
+  "poem by Aman"
+  // 👉 YOU CAN ADD / CHANGE REWARDS HERE
+];
+
+function level2(){
+  document.body.style.background="url(media/level2-bg.jpg) center/cover";
+  title.innerText="Reach Your Baby ❤️";
+  game.innerHTML=`
+  <h2 id="timer">120</h2>
+  <audio autoplay loop src="music/level2-music.mp320;
+  let interval=setInterval(()=>{
+    time--;
+    timer.innerText=time;
+
+    if(time%20===0){
+      let r=rewards[Math.floor(Math.random()*rewards.length)];
+      save("Reward "+Date.now(),r);
+      popup("Aman will give you "+r);
+    }
+
+    if(time<=0){
+      clearInterval(interval);
+      level3();
+    }
+  },1000);
+}
+
+// ================= LEVEL 3 =================
+let questions=[
+["Aman's favourite?",["Aditi","Paneer","Tomato chutney"]],
+["How did we meet?",["Instagram","Facebook","Snapchat"]],
+["Anniversary date?",["14 October 2023","13 October 2023","22 November 2024"]],
+["Topic of first fight?",["Lip kiss","Romance","Insecurities"],"lip kiss"],
+["Favourite song from Aman?",["Chulbuli ladki","O meri adu","Tu hi radha mori"]],
+["Name that gives goosebumps?",["Betu","Bubu","Baby","Adu","Jaan","Gadhi"]],
+["Worst fight?",null],
+["First moment you actually felt something?",null],
+["Will you marry Aman?",["Yes","Yes"]],
+["Anything you want to say to that idiot?",null],
+["What should kids know about Aman?",null],
+["I love you",null]
+];
+
+let qIndex=0;
+
+function level3(){
+  document.body.style.background="#fff";
+  ask();
+}
+
+function ask(){
+  if(qIndex>=questions.length){
+    finishScreen();
+    return;
+  }
+
+  let q=questions[qIndex];
+  title.innerText="Our Memories ❤️";
+
+  if(q[1]){
+    game.innerHTML="<h3>"+q[0]+"</h3>";
+    q[1].forEach(opt=>{
+      game.innerHTML+=`<button onclick="pick('${q[0]}','${opt}','${q[2]||""}')">${opt}</button>`;
+    });
+  }else{
+    game.innerHTML=`
+      <h3>${q[0]}</h3>
+      <textarea id="txt"></textarea><br><br>
+      <button onclick="textAnswer('${q[0]}')">Submit</button>
+    `;
+  }
+}
+
+function pick(question,answer,reward){
+  save(question,answer);
+  if(reward){
+    popup("Aman will give you "+reward);
+    save("Special Reward",reward);
+  }
+  qIndex++;
+  ask();
+}
+
+function textAnswer(question){
+  save(question,txt.value);
+  if(question==="Worst fight?")
+    alert("Aman loves you and will never repeat these mistakes.");
+  qIndex++;
+  ask();
+}
+
+// ================= FINAL SCREEN =================
+function finishScreen(){
+  title.innerText="Thank you baby ❤️";
+  game.innerHTML=`
+  <h3>Finish & Send Results</h3>
+  <button onclick="finishGame()">Finish & Send to Aman</button>
+  `;
+}
+
+// ================= DOWNLOAD + TELEGRAM =================
+function finishGame(){
+  let text="❤️ Aman's Memories Game ❤️\n\n";
+  for(let k in data){
+    text+=k+" : "+data[k]+"\n\n";
+  }
+
+  // Download text file
+  let blob=new Blob([text],{type:"text/plain"});
+  let a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="aman-memories.txt";
+  a.click();
+
+  // Telegram (CHANGE USERNAME BELOW)
+  let telegramUsername="YOUR_TELEGRAM_USERNAME"; // 👈 EDIT THIS
+  let link="https://t.me/"+telegramUsername+"?text="+encodeURIComponent(text);
+
+  setTimeout(()=>window.open(link,"_blank"),1200);
+}
+
+// START GAME
+level1();
+</script>
+
+</body>
+</html>
