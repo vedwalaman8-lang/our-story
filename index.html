@@ -59,9 +59,10 @@ function popup(msg){
 }
 
 // ================= LEVEL 1 =================
+
 function level1(){
-  title.innerText="Question 1";
-  game.innerHTML=`
+  title.innerText = "Question 1";
+  game.innerHTML = `
     <h3>Who defended Ahmednagar and fought Delhi?</h3>
     <button onclick="answer1('Razia')">Razia Sultana</button>
     <button onclick="answer1('Chand')">Chand Bibi</button>
@@ -73,7 +74,6 @@ function level1(){
 function answer1(ans){
   if(ans === "Chand"){
     save("History Question", "Chand Bibi");
-
     game.innerHTML = `
       <h3>Correct ❤️</h3>
       <img src="media/images (2).jpg" width="90%"><br><br>
@@ -82,9 +82,8 @@ function answer1(ans){
   }
 }
 
-  function askName(){
-  let showedPopup = false;
-
+function askName(){
+  let popupShown = false;
   game.innerHTML = `
     <h3>What is your name?</h3>
     <input id="nameInput" placeholder="Type your name ❤️" style="padding:8px"><br><br>
@@ -92,22 +91,22 @@ function answer1(ans){
   `;
 
   const input = document.getElementById("nameInput");
-
   input.addEventListener("focus", () => {
-    if(!showedPopup){
-      showedPopup = true;
+    if(!popupShown){
+      popupShown = true;
       popup("tumhare gharwaalo ne to naam hi nahi rakha tha na 😏");
     }
   });
 }
 
 function saveName(){
-  const name = document.getElementById("nameInput").value;
-  save("Name", name);
-  startLyrics();   // ✅ go to lyric game
+  save("Name", document.getElementById("nameInput").value);
+  startLyrics();
 }
-``
-  let lyricIndex = 0;
+
+// ===== LYRICS =====
+
+let lyricIndex = 0;
 let fillCount = 0;
 
 const lyricsData = [
@@ -118,8 +117,8 @@ const lyricsData = [
     song: "music/chulbuli ladki.mpeg"
   },
   {
-    text: "Waqt kai dekhe honge,<br>par ek din ham _____ honge",
-    blanks: ["ek"],
+    text: "Waqt ke _____ dekhe honge,<br>par ek din ham _____ honge",
+    blanks: ["sitare", "ek"],
     options: ["sitare", "ek", "alag", "door"],
     song: "music/algaav.ogg"
   },
@@ -130,7 +129,8 @@ const lyricsData = [
     song: "music/o meri adu.mpeg"
   }
 ];
-  function startLyrics(){
+
+function startLyrics(){
   lyricIndex = 0;
   showLyric();
 }
@@ -173,11 +173,12 @@ function checkLyric(word){
   } else {
     popup("Socho thoda 😛");
   }
+}
 
 function playLyricSong(songPath){
   game.innerHTML = `
     <h3>Listen ❤️</h3>
-    <audio controls src="${song
+    <audio controls src="${songPath}"></audio><br><br>
     <button onclick="nextLyric()">Next</button>
   `;
 }
@@ -190,35 +191,7 @@ function nextLyric(){
     video(); // ✅ after O meri adu → video
   }
 }
-
-// ================= SONGS =================
-function songs(){
-  title.innerText = "Level 1 – Your Songs";
-
-  game.innerHTML = `
-    <audio controls src="music/algaav.ogg"></audio><br><br>
-
-    <audio controls src="music/chulbuli ladki.mpeg"></audio><br><br>
-
-    <audio controls src="music/o meri adu.mpeg"></audio><br><br>
-
-    <button onclick="video()">Next</button>
-  `;
-}
-
-// ================= VIDEO =================
-function video(){
-  title.innerText = "Level 1 – Video";
-
-  game.innerHTML = `
-    <h3>A message for you ❤️</h3>
-
-    media/WhatsApp Video 2026-04-26 at 5.44.49 PM.mp4
-    </video><br><br>
-
-    <button onclick="level2()">Start Level 2</button>
-  `;
-}
+``
 // ================= LEVEL 2 =================
 let rewards=[
   "forehead kiss",
