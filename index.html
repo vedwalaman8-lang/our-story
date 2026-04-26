@@ -5,11 +5,33 @@
 <title>Reach Your Baby ❤️</title>
 
 <style>
-body {
+body{
   font-family: Arial, sans-serif;
-  text-align: center;
-  margin: 0;
-  padding: 20px;
+  text-align:center;
+  margin:0;
+  padding:20px;
+}
+button{
+  padding:10px 16px;
+  margin:6px;
+  border-radius:10px;
+  border:1px solid #ccc;
+}
+.popup{
+  position:fixed;
+  top:20px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#ff4d6d;
+  color:white;
+  padding:10px 18px;
+  border-radius:20px;
+}
+.hidden{display:none}
+textarea{
+  width:90%;
+  height:80px;
+  border-radius:10px;
 }
 </style>
 </head>
@@ -21,23 +43,20 @@ body {
 <div id="popup" class="popup hidden"></div>
 
 <script>
+// ================= STORAGE =================
 let data = JSON.parse(localStorage.getItem("amanData") || "{}");
 
-function save(key, value){
-  data[key] = value;
-  localStorage.setItem("amanData", JSON.stringify(data));
+function save(key,value){
+  data[key]=value;
+  localStorage.setItem("amanData",JSON.stringify(data));
 }
 
 function popup(msg){
-  const p = document.getElementById("popup");
-  p.innerText = msg;
+  const p=document.getElementById("popup");
+  p.innerText=msg;
   p.classList.remove("hidden");
-  setTimeout(() => p.classList.add("hidden"), 2500);
+  setTimeout(()=>p.classList.add("hidden"),2500);
 }
-</script>
-
-</body>
-</html>
 
 // ================= LEVEL 1 =================
 function level1(){
@@ -56,36 +75,29 @@ function answer1(ans){
     save("History Question","Chand Bibi");
     game.innerHTML=`
       <h3>Correct ❤️</h3>
-      <img src="media/images (2).jpg" width="90% onclick="songs()">Next</button>
+      media/images (2).jpg<br><br>
+      <button onclick="songs()">Next</button>
     `;
   }
 }
 
 // ================= SONGS =================
 function songs(){
-  title.innerText = "Level 1 – Your Songs";
-
-  game.innerHTML = `
-    <audio controls src="music/algaav.ogg"></audio><br><br>
-
-    <audio controls src="music/chulbuli ladki.mpeg"></audio><br><br>
-
-    <audio controls src="music/o meri adu.mpeg"></audio><br><br>
-
+  title.innerText="Level 1 – Your Songs";
+  game.innerHTML=`
+    music/algaav.ogg</audio><br><br>
+    music/chulbuli ladki.mpeg</audio><br><br>
+    music/o meri adu.mpeg</audio><br><br>
     <button onclick="video()">Next</button>
   `;
 }
 
 // ================= VIDEO =================
 function video(){
-  game.innerHTML = `
+  game.innerHTML=`
     <h3>A message for you ❤️</h3>
-
-    <video width="90%" controls
-      src="media/WhatsApp Video 2026-04-26 at 5.44.49 PM.mp4">
-    </video>
-
-    <br><br>
+    media/WhatsApp Video 2026-04-26 at 5.44.49 PM.mp4
+    </video><br><br>
     <button onclick="level2()">Start Level 2</button>
   `;
 }
@@ -100,44 +112,39 @@ let rewards=[
   "hand kiss",
   "lip kiss",
   "cheek kiss",
-  "waist kiss",
-  "waist kiss + measurement + lick"
+  "complete imagination"
+  "waist kiss"
+  "lick"
   "back kiss"
   "full body massage"
-  "complete imagination"
-  "feet kiss"
-  
+  "Aman"
 ];
 
 function level2(){
   document.body.style.background =
     "url('media/cpl.jpg') center/cover no-repeat";
 
-  title.innerText = "Reach Your Baby ❤️";
+  title.innerText="Reach Your Baby ❤️";
+  game.innerHTML=`<h2 id="timer">120</h2>`;
 
-  // IMPORTANT: real HTML, not &lt; &gt;
-  game.innerHTML = `
-    <h2 id="timer">120</h2>
-  `;
+  let time=120;
+  let timer=document.getElementById("timer");
 
-  let time = 120;
-  let timer = document.getElementById("timer");
-
-  let interval = setInterval(() => {
+  let interval=setInterval(()=>{
     time--;
-    timer.innerText = time;
+    timer.innerText=time;
 
-    if (time % 20 === 0 && time > 0) {
-      let r = rewards[Math.floor(Math.random() * rewards.length)];
-      save("Reward " + Date.now(), r);
-      popup("Aman will give you " + r);
+    if(time%20===0 && time>0){
+      let r=rewards[Math.floor(Math.random()*rewards.length)];
+      save("Reward "+Date.now(),r);
+      popup("Aman will give you "+r);
     }
 
-    if (time <= 0) {
+    if(time<=0){
       clearInterval(interval);
       level3();
     }
-  }, 1000);
+  },1000);
 }
 
 // ================= LEVEL 3 =================
@@ -156,40 +163,30 @@ let questions=[
   ["I love you",null]
 ];
 
-let qIndex = 0;
+let qIndex=0;
 
 function level3(){
-  document.body.style.background = "#fff";
+  document.body.style.background="#fff";
   ask();
 }
 
 function ask(){
-  if (qIndex >= questions.length) {
-    finishScreen();
-    return;
+  if(qIndex>=questions.length){
+    finishScreen(); return;
   }
+  let q=questions[qIndex];
+  title.innerText="Our Memories ❤️";
 
-  let q = questions[qIndex];
-  title.innerText = "Our Memories ❤️";
-
-  // MCQ
-  if (q[1]) {
-    game.innerHTML = `<h3>${q[0]}</h3>`;
-    q[1].forEach(opt => {
-      game.innerHTML += `
-        <button onclick='pick(
-          ${JSON.stringify(q[0])},
-          ${JSON.stringify(opt)},
-          ${JSON.stringify(q[2] || "")}
-        )'>
+  if(q[1]){
+    game.innerHTML=`<h3>${q[0]}</h3>`;
+    q[1].forEach(opt=>{
+      game.innerHTML+=`
+        <button onclick='pick(${JSON.stringify(q[0])},${JSON.stringify(opt)},${JSON.stringify(q[2]||"")})'>
           ${opt}
-        </button>
-      `;
+        </button>`;
     });
-  }
-  // Text input
-  else {
-    game.innerHTML = `
+  }else{
+    game.innerHTML=`
       <h3>${q[0]}</h3>
       <textarea id="txt"></textarea><br><br>
       <button onclick='textAnswer(${JSON.stringify(q[0])})'>Submit</button>
@@ -197,57 +194,49 @@ function ask(){
   }
 }
 
-function pick(question, answer, reward){
-  save(question, answer);
-
-  if (reward) {
-    popup("Aman will give you " + reward);
-    save("Special Reward", reward);
+function pick(question,answer,reward){
+  save(question,answer);
+  if(reward){
+    popup("Aman will give you "+reward);
+    save("Special Reward",reward);
   }
-
-  qIndex++;
-  ask();
+  qIndex++; ask();
 }
 
 function textAnswer(question){
-  save(question, txt.value);
-
-  if (question === "Worst fight?") {
+  save(question,txt.value);
+  if(question==="Worst fight?")
     alert("Aman loves you and will never repeat these mistakes.");
-  }
-
-  qIndex++;
-  ask();
+  qIndex++; ask();
 }
 
-// ================= FINAL SCREEN =================
+// ================= FINAL =================
 function finishScreen(){
-  title.innerText = "Thank you baby ❤️";
-  game.innerHTML = `
+  title.innerText="Thank you baby ❤️";
+  game.innerHTML=`
     <h3>Finish & Send Results</h3>
     <button onclick="finishGame()">Finish & Send to Aman</button>
   `;
 }
 
-// ================= DOWNLOAD + TELEGRAM =================
 function finishGame(){
-  let text = "❤️ Aman's Memories Game ❤️\n\n";
-  for (let k in data) {
-    text += k + " : " + data[k] + "\n\n";
-  }
+  let text="❤️ Aman's Memories Game ❤️\n\n";
+  for(let k in data){ text+=k+" : "+data[k]+"\n\n"; }
 
-  // Download text file
-  let blob = new Blob([text], { type: "text/plain" });
-  let a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "aman-memories.txt";
+  let blob=new Blob([text],{type:"text/plain"});
+  let a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="aman-memories.txt";
   a.click();
 
-  // Telegram (NO @)
-  let telegramUsername = "Aman_2911";
-  let link = "https://t.me/" + telegramUsername + "?text=" +
-              encodeURIComponent(text);
-
-  setTimeout(() => window.open(link, "_blank"), 1200);
+  let telegramUsername="YOUR_TELEGRAM_USERNAME"; // CHANGE THIS
+  let link="https://t.me/"+telegramUsername+"?text="+encodeURIComponent(text);
+  setTimeout(()=>window.open(link,"_blank"),1200);
 }
 
+// START
+level1();
+</script>
+
+</body>
+</html>
