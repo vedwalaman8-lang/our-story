@@ -1,358 +1,1241 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Reach Your Baby ❤️</title>
-
 <style>
-body{
-  font-family: Arial, sans-serif;
-  text-align:center;
-  margin:0;
-  padding:20px;
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:wght@400;600;700;800&display=swap');
+
+:root {
+  --pink: #ff4d6d;
+  --light-pink: #ffd6e0;
+  --deep: #c9184a;
+  --bg: #fff0f3;
+  --text: #3d1a24;
+  --card: rgba(255,255,255,0.9);
 }
-button{
-  padding:10px 16px;
-  margin:6px;
-  border-radius:10px;
-  border:1px solid #ccc;
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  transition: background 0.8s ease;
+  overflow-x: hidden;
 }
-.popup{
-  position:fixed;
-  top:20px;
-  left:50%;
-  transform:translateX(-50%);
-  background:#ff4d6d;
-  color:white;
-  padding:10px 18px;
-  border-radius:20px;
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    radial-gradient(circle at 15% 15%, rgba(255,77,109,0.09) 0%, transparent 50%),
+    radial-gradient(circle at 85% 85%, rgba(255,77,109,0.07) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
 }
-.hidden{display:none}
-textarea{
-  width:90%;
-  height:80px;
-  border-radius:10px;
+
+#app {
+  position: relative;
+  z-index: 1;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 20px 16px 50px;
+  text-align: center;
 }
+
+h1#title {
+  font-family: 'Pacifico', cursive;
+  font-size: clamp(1.5rem, 6vw, 2.4rem);
+  color: var(--pink);
+  margin-bottom: 12px;
+  text-shadow: 0 2px 14px rgba(255,77,109,0.22);
+  animation: titlePop 0.5s cubic-bezier(.34,1.56,.64,1) both;
+}
+
+@keyframes titlePop {
+  from { transform: scale(0.75); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+#game {
+  background: var(--card);
+  border-radius: 24px;
+  padding: 24px 18px;
+  box-shadow: 0 8px 40px rgba(255,77,109,0.14);
+  backdrop-filter: blur(8px);
+  animation: cardIn 0.38s ease both;
+}
+
+@keyframes cardIn {
+  from { transform: translateY(18px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+h3 { font-size: 1.08rem; font-weight: 800; margin-bottom: 14px; line-height: 1.4; }
+h2 { font-size: 1.25rem; font-weight: 800; color: var(--pink); margin-bottom: 10px; }
+
+button {
+  display: inline-block;
+  padding: 10px 20px;
+  margin: 5px;
+  border-radius: 50px;
+  border: 2px solid var(--light-pink);
+  background: #fff;
+  color: var(--deep);
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.93rem;
+  cursor: pointer;
+  transition: all 0.16s ease;
+  box-shadow: 0 3px 10px rgba(255,77,109,0.09);
+}
+button:hover  { background: var(--pink); color: #fff; border-color: var(--pink); transform: translateY(-2px); }
+button:active { transform: scale(0.95); }
+button:disabled { opacity: 0.38; cursor: default; transform: none; background: #fff !important; color: var(--deep) !important; }
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--pink), var(--deep));
+  color: #fff !important;
+  border-color: transparent !important;
+  box-shadow: 0 5px 20px rgba(255,77,109,0.38);
+  font-size: 0.98rem;
+  padding: 12px 28px;
+}
+.btn-primary:hover { filter: brightness(1.08); color: #fff !important; }
+
+textarea, input[type="text"] {
+  width: 100%;
+  border-radius: 14px;
+  border: 2px solid var(--light-pink);
+  padding: 10px 14px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.95rem;
+  outline: none;
+  background: #fff;
+  color: var(--text);
+  transition: border-color 0.2s;
+  resize: none;
+  margin-top: 6px;
+}
+textarea { height: 88px; }
+textarea:focus, input:focus { border-color: var(--pink); }
+
+img  { border-radius: 16px; max-width: 100%; }
+video { border-radius: 16px; max-width: 100%; margin: 8px 0; }
+audio { width: 100%; margin: 10px 0; border-radius: 8px; }
+
+/* popup */
+#popup {
+  position: fixed;
+  top: 16px; left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, var(--pink), var(--deep));
+  color: #fff;
+  padding: 11px 22px;
+  border-radius: 50px;
+  z-index: 9999;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.92rem;
+  cursor: pointer;
+  max-width: 88vw;
+  text-align: center;
+  box-shadow: 0 6px 28px rgba(255,77,109,0.42);
+  animation: popIn 0.28s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes popIn {
+  from { transform: translateX(-50%) scale(0.72); opacity: 0; }
+  to   { transform: translateX(-50%) scale(1);    opacity: 1; }
+}
+#popup.hidden { display: none; }
+
+/* reward toast */
+.reward-toast {
+  position: fixed;
+  bottom: 26px; left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #ff6b8a, #c9184a);
+  color: #fff;
+  padding: 10px 22px;
+  border-radius: 50px;
+  z-index: 9998;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.88rem;
+  box-shadow: 0 6px 24px rgba(255,77,109,0.42);
+  animation: toastIn 0.38s cubic-bezier(.34,1.56,.64,1) both;
+  max-width: 88vw;
+  text-align: center;
+  pointer-events: none;
+}
+@keyframes toastIn {
+  from { transform: translateX(-50%) translateY(28px); opacity: 0; }
+  to   { transform: translateX(-50%) translateY(0);    opacity: 1; }
+}
+
+/* blank */
+.blank {
+  display: inline-block;
+  min-width: 68px;
+  border-bottom: 3px solid var(--pink);
+  color: var(--pink);
+  font-weight: 800;
+  padding: 0 5px;
+}
+.blank.filled { color: #4caf50; border-color: #4caf50; }
+
+/* level badge */
+.lbadge {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--pink), var(--deep));
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 4px 14px;
+  border-radius: 50px;
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* progress dots */
+.prog { display: flex; gap: 6px; justify-content: center; margin-bottom: 12px; }
+.prog span { width: 8px; height: 8px; border-radius: 50%; background: var(--light-pink); transition: background 0.3s; }
+.prog span.done { background: var(--pink); }
+
+/* shooter */
+#shooterWrap {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #0d0019;
+  box-shadow: 0 6px 32px rgba(0,0,0,0.45);
+  touch-action: none;
+}
+#shooterCanvas { display: block; width: 100%; cursor: crosshair; }
+#shooterHUD {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 7px 14px;
+  background: rgba(0,0,0,0.7);
+  color: #fff;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 0.83rem;
+  border-bottom: 2px solid var(--pink);
+}
+
+.fire-btn {
+  background: linear-gradient(135deg, var(--pink), var(--deep)) !important;
+  color: #fff !important;
+  border: none !important;
+  font-size: 1rem !important;
+  padding: 14px 34px !important;
+  border-radius: 50px !important;
+  box-shadow: 0 6px 26px rgba(255,77,109,0.48) !important;
+  animation: pulsebtn 1s infinite alternate;
+  margin-top: 12px;
+}
+@keyframes pulsebtn {
+  from { box-shadow: 0 6px 20px rgba(255,77,109,0.4); }
+  to   { box-shadow: 0 6px 38px rgba(255,77,109,0.85); }
+}
+
+/* doors */
+.doors-wrap { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin: 12px 0; }
+.door-card {
+  border: 2px solid var(--light-pink);
+  border-radius: 16px;
+  padding: 14px 10px;
+  width: 155px;
+  cursor: pointer;
+  background: #fff;
+  transition: all 0.2s;
+  text-align: left;
+}
+.door-card:hover { border-color: var(--pink); transform: translateY(-3px); box-shadow: 0 8px 22px rgba(255,77,109,0.18); }
+.door-icon { font-size: 2.2rem; display: block; text-align: center; margin-bottom: 6px; }
+.door-title { font-weight: 800; text-align: center; font-size: 0.9rem; margin-bottom: 6px; }
+.door-clues { font-size: 0.76rem; color: #666; list-style: none; padding: 0; }
+.door-clues li { padding: 2px 0; }
+.door-clues li::before { content: '• '; color: var(--pink); }
 </style>
 </head>
-
 <body>
-
-<h1 id="title">Welcome ❤️</h1>
-<div id="game"></div>
-<div id="popup" class="popup hidden"></div>
+<div id="app">
+  <h1 id="title">Welcome ❤️</h1>
+  <div id="game"></div>
+</div>
+<div id="popup" class="hidden"></div>
 
 <script>
-// ================= STORAGE =================
-let data = JSON.parse(localStorage.getItem("amanData") || "{}");
+// ════════════════════════════════════════════
+//  UTILS
+// ════════════════════════════════════════════
+const title = document.getElementById('title');
+const game  = document.getElementById('game');
+let SD = JSON.parse(localStorage.getItem('amanGame') || '{}');
+function save(k,v){ SD[k]=v; localStorage.setItem('amanGame',JSON.stringify(SD)); }
 
-function save(key,value){
-  data[key]=value;
-  localStorage.setItem("amanData",JSON.stringify(data));
-}
-
+let popT;
 function popup(msg){
-  const p=document.getElementById("popup");
-  p.innerText=msg;
-  p.classList.remove("hidden");
-  setTimeout(()=>p.classList.add("hidden"),2500);
+  const p=document.getElementById('popup');
+  p.textContent=msg+'  ✕';
+  p.className='';
+  p.onclick=()=>p.className='hidden';
+  clearTimeout(popT);
+  popT=setTimeout(()=>p.className='hidden',3600);
 }
 
-// ================= LEVEL 1 =================
+function rewardToast(msg){
+  document.querySelectorAll('.reward-toast').forEach(e=>e.remove());
+  const d=document.createElement('div');
+  d.className='reward-toast';
+  d.textContent='🎁 '+msg;
+  document.body.appendChild(d);
+  setTimeout(()=>d.remove(),3200);
+}
 
+function fadeIn(){
+  game.style.animation='none';
+  requestAnimationFrame(()=>{ game.style.animation='cardIn 0.35s ease both'; });
+}
+
+// ════════════════════════════════════════════
+//  LEVEL 1 — HISTORY
+// ════════════════════════════════════════════
 function level1(){
-  title.innerText = "Question 1";
-  game.innerHTML = `
-    <h3>Who defended Ahmednagar and fought Delhi?</h3>
-    <button onclick="answer1('Razia')">Razia Sultana</button>
-    <button onclick="answer1('Chand')">Chand Bibi</button>
-    <button onclick="answer1('Rani')">Rani Durgavati</button>
-    <button onclick="answer1('Ahilya')">Ahilyabai</button>
-  `;
+  title.textContent='A Little History Quiz ❤️';
+  game.innerHTML=`
+    <div class="lbadge">Level 1 — Quiz</div>
+    <h3>Who defended Ahmednagar and fought for Delhi?</h3>
+    <div style="margin-top:8px">
+      <button onclick="ans1('w')">Razia Sultana</button>
+      <button onclick="ans1('r')">Chand Bibi</button>
+      <button onclick="ans1('w')">Rani Durgavati</button>
+      <button onclick="ans1('w')">Ahilyabai Holkar</button>
+    </div>`;
 }
 
-function answer1(ans){
-  if(ans === "Chand"){
-    save("History Question", "Chand Bibi");
-    game.innerHTML = `
-      <h3>Correct ❤️</h3>
-      <img src="media/images (2).jpg" width="90%"><br><br>
-      <button onclick="askName()">Next</button>
-    `;
-  }
+function ans1(a){
+  if(a!=='r'){popup("Not quite! Think again 😊");return;}
+  save('History Q','Chand Bibi');
+  game.innerHTML=`
+    <div class="lbadge">Correct ✓</div>
+    <h3>That's right — Chand Bibi! ❤️</h3>
+    <img src="media/images (2).jpg" alt="Chand Bibi" style="margin:10px 0">
+    <br>
+    <button class="btn-primary" onclick="askName()">Next ➡️</button>`;
 }
 
+// ════════════════════════════════════════════
+//  NAME
+// ════════════════════════════════════════════
 function askName(){
-  let popupShown = false;
-  game.innerHTML = `
-    <h3>What is your name?</h3>
-    <input id="nameInput" placeholder="Type your name ❤️" style="padding:8px"><br><br>
-    <button onclick="saveName()">Next</button>
-  `;
-
-  const input = document.getElementById("nameInput");
-  input.addEventListener("focus", () => {
-    if(!popupShown){
-      popupShown = true;
-      popup("tumhare gharwaalo ne to naam hi nahi rakha tha na 😏");
-    }
+  let shown=false;
+  game.innerHTML=`
+    <h3>What is your name? 😊</h3>
+    <input type="text" id="ni" placeholder="Type your name ❤️">
+    <br><br>
+    <button class="btn-primary" onclick="saveName()">Next ➡️</button>`;
+  document.getElementById('ni').addEventListener('focus',()=>{
+    if(!shown){shown=true;popup("tere gharwaalo ne to naam hi nahi rakha tha na 😏");}
   });
 }
-
 function saveName(){
-  save("Name", document.getElementById("nameInput").value);
-  startLyrics();
+  const v=document.getElementById('ni').value.trim();
+  if(!v){popup("Naam to batao pehle 😄");return;}
+  save('Name',v);
+  askSingle();
 }
 
-// ===== LYRICS =====
+// ════════════════════════════════════════════
+//  SINGLE?
+// ════════════════════════════════════════════
+function askSingle(){
+  fadeIn();
+  game.innerHTML=`
+    <h3>Are you single? 😏</h3>
+    <button onclick="askBelong()">Yes</button>
+    <button onclick="askBelong()">No</button>`;
+}
+function askBelong(){
+  fadeIn();
+  game.innerHTML=`
+    <h3>Whom do you belong to? 💕</h3>
+    <button onclick="belongDone()">AMAN</button>
+    <button onclick="belongDone()">AMAN</button>
+    <button onclick="belongDone()">AMAN</button>
+    <button onclick="belongDone()">AMAN</button>`;
+}
+function belongDone(){
+  save('Belongs To','AMAN');
+  fadeIn();
+  game.innerHTML=`
+    <div style="padding:8px">
+      <div style="font-size:3rem;margin-bottom:8px">❤️</div>
+      <h2>Now reach your baby by playing the game!</h2>
+      <p style="color:#999;margin:8px 0 16px">Fill in the lyrics of Aman's songs 🎵</p>
+      <button class="btn-primary" onclick="startLyrics()">Start Level 1 🎵</button>
+    </div>`;
+}
 
-let lyricIndex = 0;
-let fillCount = 0;
-
-const lyricsData = [
-  {
-    text: "Ek chulbuli si _____ thi,<br>jo aaj yu hai ji",
-    blanks: ["ladki"],
-    options: ["ladki", "rahi", "moti", "khush"],
-    song: "music/chulbuli ladki.mpeg"
-  },
-  {
-    text: "Waqt kai dekhe honge,<br>par ek din ham _____ honge",
-    blanks: ["ek"],
-    options: ["sitare", "ek", "alag", "door"],
-    song: "music/algaav.ogg"
-  },
-  {
-    text: "O meri adu , tu mera _____ hai",
-    blanks: ["bachha"],
-    options: ["adu", "bachha", "radha", "pyaar"],
-    song: "music/o meri adu.mpeg"
-  }
+// ════════════════════════════════════════════
+//  LYRICS
+// ════════════════════════════════════════════
+const LYRICS=[
+  {text:"Ek chulbuli si _____ thi,<br>jo aaj yu hai ji",
+   blanks:["ladki"],opts:["ladki","rahi","moti","khush"],
+   song:"music/chulbuli ladki.mpeg"},
+  {text:"Waqt kai dekhe honge,<br>par ek din ham _____ honge",
+   blanks:["ek"],opts:["sitare","ek","alag","door"],
+   song:"music/algaav.ogg"},
+  {text:"O meri adu, tu mera _____ hai",
+   blanks:["bachha"],opts:["adu","bachha","radha","pyaar"],
+   song:"music/o meri adu.mpeg"}
 ];
 
-function startLyrics(){
-  lyricIndex = 0;
-  showLyric();
-}
+let lyricIdx=0, fillCount=0;
+
+function startLyrics(){ lyricIdx=0; showLyric(); }
 
 function showLyric(){
-  fillCount = 0;
-  const l = lyricsData[lyricIndex];
-
-  let display = l.text;
-  l.blanks.forEach(() => {
-    display = display.replace(
-      "_____",
-      "<span class='blank'>_____</span>"
-    );
-  });
-
-  game.innerHTML = `
+  fillCount=0;
+  const l=LYRICS[lyricIdx];
+  let blkI=0;
+  let display=l.text.replace(/_____/g,()=>`<span class="blank" id="bl${blkI++}">_____</span>`);
+  const dots=LYRICS.map((_,i)=>`<span class="${i<lyricIdx?'done':''}"></span>`).join('');
+  fadeIn();
+  game.innerHTML=`
+    <div class="lbadge">Lyrics — ${lyricIdx+1} / ${LYRICS.length}</div>
+    <div class="prog">${dots}</div>
     <h3>Complete the Lyrics 🎵</h3>
-    <p>${display}</p>
-    <div id="options"></div>
-  `;
+    <p style="font-size:1.12rem;line-height:2;margin:10px 0;font-weight:700">${display}</p>
+    <div id="opts" style="margin-top:8px"></div>`;
 
-  const optDiv = document.getElementById("options");
-  l.options.forEach(word => {
-    const b = document.createElement("button");
-    b.innerText = word;
-    b.onclick = () => checkLyric(word);
-    optDiv.appendChild(b);
+  const od=document.getElementById('opts');
+  l.opts.forEach(w=>{
+    const b=document.createElement('button');
+    b.textContent=w; b.id='ob_'+w;
+    b.onclick=()=>checkLyric(w);
+    od.appendChild(b);
   });
 }
 
 function checkLyric(word){
-  const l = lyricsData[lyricIndex];
-  const blanks = document.querySelectorAll(".blank");
-
-  if(word !== l.blanks[fillCount]) {
-    popup("Socho thoda 😛");
-    return;
-  }
-
-  blanks[fillCount].innerText = word;
+  const l=LYRICS[lyricIdx];
+  if(word!==l.blanks[fillCount]){popup("Socho thoda 😛");return;}
+  const sp=document.getElementById('bl'+fillCount);
+  if(sp){sp.textContent=word;sp.classList.add('filled');}
+  const ob=document.getElementById('ob_'+word);
+  if(ob){ob.disabled=true;ob.style.background='#e8f5e9';}
   fillCount++;
-
-  // lock once per lyric
-  if (fillCount === l.blanks.length) {
-    // prevent double-trigger
-    setTimeout(() => {
-      playLyricSong(l.song);
-    }, 200);
+  if(fillCount>=l.blanks.length){
+    document.querySelectorAll('#opts button').forEach(b=>b.disabled=true);
+    setTimeout(()=>playLyricSong(l.song),500);
   }
 }
-``
+
 function playLyricSong(songPath){
-  game.innerHTML = `
+  fadeIn();
+  game.innerHTML=`
+    <div class="lbadge">🎵 Aman sang this for you</div>
     <h3>Listen ❤️</h3>
-    <div id="audioHolder"></div>
-    <br><br>
-    <button id="nextBtn">Next</button>
-  `;
+    <div id="ah"></div>
+    <br>
+    <button id="nb" class="btn-primary" style="display:none">Next ➡️</button>`;
 
-  const audio = document.createElement("audio");
-  audio.controls = true;
-  audio.preload = "auto";
-  audio.src = songPath;
+  const au=document.createElement('audio');
+  au.controls=true; au.preload='auto'; au.src=songPath;
+  document.getElementById('ah').appendChild(au);
+  au.load(); au.play().catch(()=>{});
 
-  // force browser to really load the media
-  audio.load();
-
-  document.getElementById("audioHolder").appendChild(audio);
-
-  // user gesture exists, attempt autoplay safely
-  audio.play().catch(() => {});
-
-  document.getElementById("nextBtn").onclick = nextLyric;
+  setTimeout(()=>{
+    const nb=document.getElementById('nb');
+    if(nb)nb.style.display='inline-block';
+  },1800);
+  document.getElementById('nb').onclick=nextLyric;
 }
 
 function nextLyric(){
-  fillCount = 0;                 // 🔧 RESET
-  lyricIndex++;
-
-  if(lyricIndex < lyricsData.length){
-    showLyric();
-  } else {
-    video();                     // after O meri adu
-  }
+  fillCount=0; lyricIdx++;
+  if(lyricIdx<LYRICS.length)showLyric();
+  else showVideo();
 }
-``
-// ================= LEVEL 2 =================
-let rewards=[
-  "forehead kiss",
-  "warm hug",
-  "song by Aman",
-  "poem by Aman",
-  "eye kiss",
-  "hand kiss",
-  "lip kiss",
-  "cheek kiss",
-  "complete imagination",
-  "waist kiss",
-  "lick",
-  "back kiss",
-  "full body massage",
-  "Aman"
+
+// ════════════════════════════════════════════
+//  VIDEO MESSAGE
+// ════════════════════════════════════════════
+function showVideo(){
+  title.textContent='A message from Aman ❤️';
+  fadeIn();
+  game.innerHTML=`
+    <div class="lbadge">💌 Message from Aman</div>
+    <h3>He recorded this just for you 🥺</h3>
+    <video controls playsinline preload="metadata" style="margin:10px 0">
+      <source src="media/WhatsApp Video 2026-04-26 at 5.44.49 PM.mp4" type="video/mp4">
+      Your browser does not support video.
+    </video>
+    <br>
+    <button class="btn-primary" onclick="startLevel2()">Start Level 2 ➡️</button>`;
+}
+
+// ════════════════════════════════════════════
+//  LEVEL 2 — SHOOTER
+// ════════════════════════════════════════════
+// ✏️  EDIT REWARDS HERE:
+const REWARDS=[
+  "forehead kiss 💋",
+  "eye kiss 👁️",
+  "nose kiss 🐽",
+  "cheek kiss 😊",
+  "hand kiss 🤲",
+  "lip kiss 💋",
+  "neck kiss + lick 😈",
+  "waist kiss 💕",
+  "waist kiss + lick 🔥",
+  "back kiss ✨",
+  "shoulder kiss 🫂",
+  "full body massage 💆",
+  "song by Aman 🎵",
+  "poem by Aman ✍️",
+  "complete imagination with Aman 🌙",
+  "Aman himself ❤️"
 ];
 
-function level2(){
-  document.body.style.background =
-    "url('media/cpl.jpg') center/cover no-repeat";
+let earnedRewards=[], rewardPtr=0;
+let shooterInterval=null;
 
-  title.innerText="Reach Your Baby ❤️";
-  game.innerHTML=`<h2 id="timer">120</h2>`;
+function startLevel2(){
+  document.body.style.background="url('media/cpl.jpg') center/cover no-repeat fixed";
+  title.textContent='Reach Your Baby ❤️';
+  earnedRewards=[]; rewardPtr=0;
+  if(shooterInterval)clearInterval(shooterInterval);
+  fadeIn();
+  game.innerHTML=`
+    <div class="lbadge">Level 2 — Reach Aman</div>
+    <h3>Aditi, eliminate the distractions! 🔫<br><small style="font-weight:600;color:#aaa">Move left/right to dodge — tap to shoot!</small></h3>
+    <div id="shooterWrap">
+      <div id="shooterHUD">
+        <span>⏱️ <b id="timerEl">50</b>s</span>
+        <span>💋 <b id="rwCount">0</b> rewards</span>
+        <span>❤️ <b id="hpEl">5</b>/5</span>
+      </div>
+      <canvas id="shooterCanvas"></canvas>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap">
+      <button class="fire-btn" id="fireBtn" onclick="shooterFire()">🔫 SHOOT!</button>
+      <button style="padding:14px 22px;font-size:1rem;border-radius:50px;border:2px solid var(--pink);background:#fff;color:var(--deep);font-weight:800" id="leftBtn">◀ Move</button>
+      <button style="padding:14px 22px;font-size:1rem;border-radius:50px;border:2px solid var(--pink);background:#fff;color:var(--deep);font-weight:800" id="rightBtn">Move ▶</button>
+    </div>
+    <p style="font-size:11px;color:#aaa;margin-top:6px">Keyboard: ← → to move, Space to shoot</p>`;
 
-  let time=120;
-  let timer=document.getElementById("timer");
+  initShooter();
+}
 
-  let interval=setInterval(()=>{
-    time--;
-    timer.innerText=time;
+function initShooter(){
+  const canvas=document.getElementById('shooterCanvas');
+  const wrap=document.getElementById('shooterWrap');
+  const W=wrap.clientWidth||340;
+  const H=Math.min(310,Math.round(window.innerHeight*0.38));
+  canvas.width=W; canvas.height=H;
+  const ctx=canvas.getContext('2d');
 
-    if(time%20===0 && time>0){
-      let r=rewards[Math.floor(Math.random()*rewards.length)];
-      save("Reward "+Date.now(),r);
-      popup("Aman will give you "+r);
-    }
+  const GROUND=H-20;
 
-    if(time<=0){
-      clearInterval(interval);
-      level3();
+  const ENEMY_DEFS=[
+    {name:'Nazia',   hp:2,gender:'f',color:'#ff7043',dmg:1},
+    {name:'Viraj',   hp:3,gender:'m',color:'#5c6bc0',dmg:1},
+    {name:'Surbhi',  hp:3,gender:'f',color:'#f06292',dmg:1},
+    {name:'Simran',  hp:3,gender:'f',color:'#ff6eb4',dmg:1},
+    {name:'Surya',   hp:4,gender:'m',color:'#1e88e5',dmg:2},
+    {name:'Maahi',   hp:5,gender:'f',color:'#e040fb',dmg:2},
+    {name:'Vanshika',hp:8,gender:'f',color:'#e91e63',dmg:2}, // toughest
+  ];
+
+  const shuf=arr=>[...arr].sort(()=>Math.random()-0.5);
+  let queue=[...shuf(ENEMY_DEFS),...shuf(ENEMY_DEFS),...shuf(ENEMY_DEFS),...shuf(ENEMY_DEFS)];
+  let qPtr=0;
+
+  function newEnemy(){
+    const def=queue[qPtr%queue.length]; qPtr++;
+    return{...def,maxHp:def.hp,curHp:def.hp,
+      x:W+90, y:GROUND,
+      speed:1.1+Math.random()*0.8,
+      dead:false,deadTimer:0,
+      hitFlash:0};
+  }
+
+  // ── player state ──
+  const PLAYER_MAX_HP=5;
+  let player={
+    x:60, y:GROUND,
+    vx:0, speed:3.2,
+    hp:PLAYER_MAX_HP,
+    hitFlash:0,
+    bobT:0
+  };
+
+  let enemies=[newEnemy()];
+  let score=0, gameOver=false, gameWon=false;
+  let particles=[], lasers=[], dmgNumbers=[];
+  let timeLeft=50;
+  let lastEnemySpawn=0;
+
+  // controls
+  const keys={};
+  window.addEventListener('keydown',e=>{
+    keys[e.code]=true;
+    if(e.code==='Space'){e.preventDefault();shoot();}
+  });
+  window.addEventListener('keyup',e=>{ keys[e.code]=false; });
+
+  // touch move buttons
+  const lb=document.getElementById('leftBtn');
+  const rb=document.getElementById('rightBtn');
+  if(lb){
+    lb.addEventListener('pointerdown',()=>keys['ArrowLeft']=true);
+    lb.addEventListener('pointerup',()=>keys['ArrowLeft']=false);
+    lb.addEventListener('pointerleave',()=>keys['ArrowLeft']=false);
+  }
+  if(rb){
+    rb.addEventListener('pointerdown',()=>keys['ArrowRight']=true);
+    rb.addEventListener('pointerup',()=>keys['ArrowRight']=false);
+    rb.addEventListener('pointerleave',()=>keys['ArrowRight']=false);
+  }
+
+  function shoot(){
+    if(gameOver)return;
+    const target=enemies.find(e=>!e.dead);
+    if(!target)return;
+    const gunX=player.x+14, gunY=player.y-28;
+    lasers.push({x:gunX,y:gunY,tx:target.x,ty:target.y-36,prog:0,done:false,enemyRef:target});
+  }
+
+  window.__shootFn=shoot;
+  canvas.addEventListener('click',shoot);
+  canvas.addEventListener('touchstart',e=>{e.preventDefault();shoot();},{passive:false});
+
+  function giveReward(){
+    if(rewardPtr>=REWARDS.length)return;
+    const r=REWARDS[rewardPtr++];
+    earnedRewards.push(r);
+    save('L2 Reward '+Date.now(),r);
+    const rc=document.getElementById('rwCount');
+    if(rc)rc.textContent=earnedRewards.length;
+    rewardToast('Aman will give you: '+r);
+  }
+
+  // Timer
+  shooterInterval=setInterval(()=>{
+    if(gameOver)return;
+    timeLeft--;
+    const te=document.getElementById('timerEl');
+    if(te)te.textContent=Math.max(0,timeLeft);
+    if(timeLeft%15===0&&timeLeft>0)giveReward();
+    if(timeLeft<=0){
+      clearInterval(shooterInterval);
+      gameOver=true; gameWon=true;
+      setTimeout(level2Win,900);
     }
   },1000);
+
+  // ── draw helpers ──────────────────────────
+  function roundRect(x,y,w,h,r){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y);
+    ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+    ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+    ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+    ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y);
+    ctx.closePath();
+  }
+
+  const stars=Array.from({length:55},()=>({
+    x:Math.random()*W,y:Math.random()*H*0.85,
+    r:0.5+Math.random()*1.3,a:Math.random()*Math.PI*2
+  }));
+
+  function drawBg(){
+    const grd=ctx.createLinearGradient(0,0,0,H);
+    grd.addColorStop(0,'#090015'); grd.addColorStop(1,'#1a0a10');
+    ctx.fillStyle=grd; ctx.fillRect(0,0,W,H);
+    stars.forEach(s=>{
+      s.a+=0.006;
+      ctx.globalAlpha=0.3+0.26*Math.abs(Math.sin(s.a));
+      ctx.fillStyle='#fff';
+      ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill();
+    });
+    ctx.globalAlpha=1;
+    ctx.fillStyle='#250614'; ctx.fillRect(0,GROUND+2,W,H-GROUND-2);
+    ctx.fillStyle='rgba(201,24,74,0.3)'; ctx.fillRect(0,GROUND,W,3);
+  }
+
+  // ── draw Aditi (female protagonist) ──
+  function drawPlayer(){
+    ctx.save();
+    const px=player.x, py=player.y;
+    const bob=Math.sin(player.bobT)*3;
+
+    // hit flash: tint red when hurt
+    if(player.hitFlash>0){
+      ctx.globalAlpha=0.55+0.45*(player.hitFlash%4<2?1:0);
+    }
+
+    ctx.shadowColor='#ff9eb5'; ctx.shadowBlur=16;
+
+    // long hair (behind body) — dark brown flowing strands
+    ctx.strokeStyle='#4a2000'; ctx.lineWidth=6;
+    for(let i=0;i<4;i++){
+      const hx=px-10+i*7;
+      ctx.beginPath();
+      ctx.moveTo(hx,py-38+bob);
+      ctx.bezierCurveTo(hx-5,py-20+bob,hx-8,py-5,hx-6,py+8);
+      ctx.stroke();
+    }
+
+    // dress / skirt — hot pink
+    ctx.shadowColor='#ff4d6d'; ctx.shadowBlur=8;
+    ctx.fillStyle='#ff4d6d';
+    ctx.beginPath();
+    ctx.moveTo(px-8,py-22+bob);
+    ctx.lineTo(px-16,py+2);
+    ctx.lineTo(px+16,py+2);
+    ctx.lineTo(px+8,py-22+bob);
+    ctx.closePath();
+    ctx.fill();
+
+    // skirt flare
+    ctx.fillStyle='#c9184a';
+    ctx.beginPath();
+    ctx.moveTo(px-12,py-5+bob);
+    ctx.lineTo(px-20,py+2);
+    ctx.lineTo(px+20,py+2);
+    ctx.lineTo(px+12,py-5+bob);
+    ctx.closePath();
+    ctx.fill();
+
+    // legs
+    ctx.fillStyle='#ffb347';
+    ctx.fillRect(px-7,py+2,5,12);
+    ctx.fillRect(px+2,py+2,5,12);
+    // shoes
+    ctx.fillStyle='#c9184a';
+    ctx.beginPath(); ctx.ellipse(px-4,py+14,5,3,0,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(px+5,py+14,5,3,0,0,Math.PI*2); ctx.fill();
+
+    // skin — neck
+    ctx.fillStyle='#ffb347'; ctx.shadowBlur=0;
+    ctx.fillRect(px-3,py-28+bob,6,8);
+
+    // head
+    ctx.beginPath(); ctx.arc(px,py-36+bob,13,0,Math.PI*2);
+    ctx.fillStyle='#ffb347'; ctx.fill();
+
+    // hair on top — long thick dark
+    ctx.fillStyle='#3d1500';
+    ctx.beginPath(); ctx.ellipse(px,py-46+bob,13,6,0,Math.PI,Math.PI*2); ctx.fill();
+    // ponytail / side bang
+    ctx.beginPath();
+    ctx.moveTo(px+10,py-44+bob);
+    ctx.bezierCurveTo(px+20,py-38+bob,px+22,py-26+bob,px+14,py-18+bob);
+    ctx.lineWidth=5; ctx.strokeStyle='#3d1500'; ctx.stroke();
+
+    // eyes — big cute ones
+    ctx.fillStyle='#fff';
+    ctx.beginPath(); ctx.ellipse(px-5,py-37+bob,4,5,0,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(px+5,py-37+bob,4,5,0,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#1a0030';
+    ctx.beginPath(); ctx.arc(px-5,py-37+bob,2.5,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(px+5,py-37+bob,2.5,0,Math.PI*2); ctx.fill();
+    // eye shine
+    ctx.fillStyle='#fff';
+    ctx.beginPath(); ctx.arc(px-4,py-38+bob,1,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(px+6,py-38+bob,1,0,Math.PI*2); ctx.fill();
+    // lashes
+    ctx.strokeStyle='#1a0030'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(px-9,py-41+bob); ctx.lineTo(px-11,py-43+bob); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(px+9,py-41+bob); ctx.lineTo(px+11,py-43+bob); ctx.stroke();
+    // smile
+    ctx.strokeStyle='#c9184a'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.arc(px,py-33+bob,4,0.1,Math.PI-0.1); ctx.stroke();
+    // cheek blush
+    ctx.fillStyle='rgba(255,150,150,0.35)';
+    ctx.beginPath(); ctx.ellipse(px-9,py-34+bob,4,2.5,0,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(px+9,py-34+bob,4,2.5,0,0,Math.PI*2); ctx.fill();
+
+    // gun arm (right) — pointing right
+    ctx.fillStyle='#ffb347';
+    ctx.fillRect(px+8,py-24+bob,8,4);
+    ctx.fillStyle='#555';
+    ctx.fillRect(px+15,py-26+bob,14,7);
+    // laser dot on barrel
+    ctx.fillStyle='#ff0040';
+    ctx.beginPath(); ctx.arc(px+29,py-23+bob,2.5,0,Math.PI*2); ctx.fill();
+
+    // label
+    ctx.shadowBlur=0; ctx.globalAlpha=1;
+    ctx.fillStyle='#ffd6e0'; ctx.font='bold 9px Nunito,sans-serif';
+    ctx.textAlign='center';
+    ctx.fillText('ADITI 💕',px,py+22);
+
+    // player HP bar below name
+    const bw=36,bh=4,bx=px-bw/2,by=py+25;
+    ctx.fillStyle='#333'; ctx.fillRect(bx,by,bw,bh);
+    ctx.fillStyle='#ff4d6d';
+    ctx.fillRect(bx,by,bw*(player.hp/PLAYER_MAX_HP),bh);
+
+    ctx.restore();
+  }
+
+  function drawEnemy(e){
+    ctx.save();
+    const ex=e.x, ey=e.y, sz=36;
+
+    if(e.dead){
+      ctx.globalAlpha=e.deadTimer/45;
+      ctx.font='36px serif'; ctx.textAlign='center';
+      ctx.fillText('💥',ex,ey-10);
+      ctx.restore(); return;
+    }
+
+    if(e.hitFlash>0){
+      ctx.globalAlpha=0.5+0.5*(e.hitFlash%3<1?1:0);
+      e.hitFlash--;
+    }
+
+    ctx.shadowColor=e.color; ctx.shadowBlur=14;
+
+    // head
+    ctx.beginPath(); ctx.arc(ex,ey-sz*0.62,sz*0.37,0,Math.PI*2);
+    ctx.fillStyle=e.color+'cc'; ctx.fill();
+
+    ctx.shadowBlur=0;
+    // eyes (angry)
+    ctx.fillStyle='#fff';
+    ctx.beginPath(); ctx.arc(ex-6,ey-sz*0.68,3,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(ex+6,ey-sz*0.68,3,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#000';
+    ctx.beginPath(); ctx.arc(ex-6,ey-sz*0.68,1.5,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(ex+6,ey-sz*0.68,1.5,0,Math.PI*2); ctx.fill();
+    // angry brows
+    ctx.strokeStyle='#fff'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(ex-9,ey-sz*0.82); ctx.lineTo(ex-3,ey-sz*0.78); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(ex+9,ey-sz*0.82); ctx.lineTo(ex+3,ey-sz*0.78); ctx.stroke();
+    // frown
+    ctx.beginPath(); ctx.arc(ex,ey-sz*0.48,5,Math.PI+0.3,-0.3); ctx.stroke();
+
+    ctx.shadowColor=e.color; ctx.shadowBlur=8;
+    if(e.gender==='f'){
+      ctx.beginPath();
+      ctx.moveTo(ex,ey-sz*0.22);
+      ctx.lineTo(ex-sz*0.52,ey+sz*0.78);
+      ctx.lineTo(ex+sz*0.52,ey+sz*0.78);
+      ctx.closePath();
+      ctx.fillStyle=e.color+'99'; ctx.fill();
+      ctx.strokeStyle=e.color+'dd'; ctx.lineWidth=4;
+      for(let i=-1;i<=1;i++){
+        ctx.beginPath();
+        ctx.moveTo(ex+i*9,ey-sz*0.96);
+        ctx.quadraticCurveTo(ex+i*15,ey-sz*0.65,ex+i*13,ey-sz*0.42);
+        ctx.stroke();
+      }
+    } else {
+      ctx.fillStyle=e.color+'99';
+      ctx.fillRect(ex-sz*0.3,ey-sz*0.22,sz*0.6,sz*0.75);
+      ctx.fillStyle=e.color+'66';
+      ctx.fillRect(ex-sz*0.27,ey+sz*0.52,sz*0.22,sz*0.4);
+      ctx.fillRect(ex+sz*0.05,ey+sz*0.52,sz*0.22,sz*0.4);
+      ctx.fillStyle=e.color+'dd';
+      for(let i=0;i<5;i++){
+        const hx=ex-sz*0.3+i*sz*0.14;
+        ctx.beginPath();
+        ctx.moveTo(hx,ey-sz*0.96);
+        ctx.lineTo(hx+sz*0.07,ey-sz*0.75);
+        ctx.lineTo(hx+sz*0.14,ey-sz*0.96);
+        ctx.closePath(); ctx.fill();
+      }
+    }
+
+    ctx.shadowBlur=0; ctx.globalAlpha=1;
+    // name tag
+    ctx.font='bold 11px Nunito,sans-serif';
+    const nw=ctx.measureText(e.name).width+14;
+    const ny=ey-sz*1.28;
+    ctx.fillStyle='rgba(0,0,0,0.8)';
+    roundRect(ex-nw/2,ny-10,nw,21,7); ctx.fill();
+    ctx.fillStyle='#fff'; ctx.textAlign='center';
+    ctx.fillText(e.name,ex,ny+5);
+
+    // HP bar
+    const bw=58,bh=6,bx=ex-bw/2,by=ey+sz*0.85;
+    ctx.fillStyle='#333'; ctx.fillRect(bx,by,bw,bh);
+    ctx.fillStyle=e.color; ctx.fillRect(bx,by,bw*(e.curHp/e.maxHp),bh);
+    ctx.strokeStyle='rgba(255,255,255,0.18)';
+    ctx.lineWidth=1; ctx.strokeRect(bx,by,bw,bh);
+
+    ctx.restore();
+  }
+
+  function drawLasers(){
+    lasers.forEach(l=>{
+      if(l.done)return;
+      l.prog=Math.min(1,l.prog+0.16);
+      const cx=l.x+(l.tx-l.x)*l.prog;
+      const cy=l.y+(l.ty-l.y)*l.prog;
+      ctx.save();
+      ctx.shadowColor='#ff0060'; ctx.shadowBlur=20;
+      // beam trail
+      ctx.strokeStyle='rgba(255,30,80,0.88)'; ctx.lineWidth=4;
+      ctx.beginPath(); ctx.moveTo(l.x,l.y); ctx.lineTo(cx,cy); ctx.stroke();
+      // inner bright core
+      ctx.strokeStyle='rgba(255,200,220,0.7)'; ctx.lineWidth=1.5;
+      ctx.beginPath(); ctx.moveTo(l.x,l.y); ctx.lineTo(cx,cy); ctx.stroke();
+      // tip flash
+      ctx.beginPath(); ctx.arc(cx,cy,5,0,Math.PI*2);
+      ctx.fillStyle='#fff5f8'; ctx.fill();
+      ctx.restore();
+      if(l.prog>=1)l.done=true;
+    });
+    lasers=lasers.filter(l=>!l.done);
+  }
+
+  function drawDmgNumbers(){
+    dmgNumbers=dmgNumbers.filter(d=>d.life>0);
+    dmgNumbers.forEach(d=>{
+      ctx.save();
+      ctx.globalAlpha=d.life/d.maxLife;
+      ctx.fillStyle=d.color||'#fff';
+      ctx.font=`bold ${d.size||14}px Nunito,sans-serif`;
+      ctx.textAlign='center';
+      ctx.fillText(d.text,d.x,d.y);
+      ctx.restore();
+      d.y-=1.2; d.life--;
+    });
+  }
+
+  function spawnParticles(x,y,color,n=12){
+    for(let i=0;i<n;i++){
+      particles.push({x,y,
+        vx:(Math.random()-0.5)*7,vy:(Math.random()-0.5)*7,
+        r:2+Math.random()*4,color,
+        life:16+Math.random()*14,maxLife:30});
+    }
+  }
+
+  function drawParticles(){
+    particles=particles.filter(p=>p.life>0);
+    particles.forEach(p=>{
+      ctx.save();
+      ctx.globalAlpha=p.life/p.maxLife;
+      ctx.fillStyle=p.color;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
+      ctx.restore();
+      p.x+=p.vx; p.y+=p.vy; p.vy+=0.18; p.life--;
+    });
+  }
+
+  // ── main loop ──
+  function loop(){
+    if(gameOver){
+      drawBg(); drawPlayer(); drawParticles(); drawDmgNumbers(); return;
+    }
+
+    // player movement
+    player.bobT+=0.12;
+    if(keys['ArrowLeft']||keys['KeyA'])  player.x=Math.max(20,player.x-player.speed);
+    if(keys['ArrowRight']||keys['KeyD']) player.x=Math.min(W*0.55,player.x+player.speed);
+
+    // spawn extra enemy over time
+    const wave=Math.floor((50-timeLeft)/15);
+    if(enemies.filter(e=>!e.dead).length<=wave&&Date.now()-lastEnemySpawn>2000){
+      enemies.push(newEnemy());
+      lastEnemySpawn=Date.now();
+    }
+
+    // update enemies
+    enemies.forEach(e=>{
+      if(e.dead){e.deadTimer--;return;}
+      e.x-=e.speed;
+
+      // enemy reaches player zone → deal damage
+      if(e.x<player.x+22&&e.x>player.x-22&&!e.dead){
+        player.hp=Math.max(0,player.hp-e.dmg*0.03); // gradual damage while close
+        player.hitFlash=6;
+        const hpEl=document.getElementById('hpEl');
+        if(hpEl)hpEl.textContent=Math.ceil(player.hp);
+        spawnParticles(player.x,player.y-20,'#ff4d6d',3);
+
+        if(Math.ceil(player.hp)<=0){
+          gameOver=true;
+          setTimeout(()=>level2Win(true),800);
+        }
+      }
+
+      if(e.x<-90){ // went past player — respawn
+        e.x=W+90;
+        e.curHp=e.maxHp;
+      }
+    });
+    // remove fully expired dead enemies
+    enemies=enemies.filter(e=>!e.dead||e.deadTimer>0);
+    if(enemies.length===0)enemies.push(newEnemy());
+
+    // laser vs enemy collision
+    lasers.forEach(l=>{
+      if(l.done||!l.enemyRef)return;
+      const e=l.enemyRef;
+      if(l.prog>=1&&!e.dead){
+        e.curHp--;
+        score++;
+        e.hitFlash=6;
+        spawnParticles(e.x,e.y-20,e.color,8);
+        dmgNumbers.push({x:e.x,y:e.y-50,text:'-1',color:'#fff',
+          life:22,maxLife:22,size:13});
+        if(score%4===0)giveReward();
+        if(e.curHp<=0){
+          e.dead=true; e.deadTimer=40;
+          popup(e.name+' eliminated! 💥');
+          giveReward(); // bonus on kill
+          spawnParticles(e.x,e.y-20,e.color,20);
+        }
+        l.done=true;
+      }
+    });
+    lasers=lasers.filter(l=>!l.done);
+
+    // ── render ──
+    drawBg();
+    // draw trail/ground decorations
+    enemies.forEach(e=>drawEnemy(e));
+    drawLasers();
+    drawPlayer();
+    drawParticles();
+    drawDmgNumbers();
+
+    // timer flash when low
+    const te=document.getElementById('timerEl');
+    if(te&&timeLeft<=10) te.style.color='#ff4d6d';
+
+    requestAnimationFrame(loop);
+  }
+  loop();
 }
 
-// ================= LEVEL 3 =================
-let questions=[
-  ["Aman's favourite?",["Aditi","Paneer","Tomato chutney"]],
-  ["How did we meet?",["Instagram","Facebook","Snapchat"]],
-  ["Anniversary date?",["14 October 2023","13 October 2023","22 November 2024"]],
-  ["Topic of first fight?",["Lip kiss","Romance","Insecurities"],"lip kiss"],
-  ["Favourite song from Aman?",["Chulbuli ladki","O meri adu","Tu hi radha mori"]],
-  ["Name that gives goosebumps?",["Betu","Bubu","Baby","Adu","Jaan","Gadhi"]],
-  ["Worst fight?",null],
-  ["First moment you actually felt something?",null],
-  ["Will you marry Aman?",["Yes","Yes"]],
-  ["Anything you want to say to that idiot?",null],
-  ["What should kids know about Aman?",null],
-  ["I love you",null]
+function shooterFire(){ if(window.__shootFn)window.__shootFn(); }
+
+function level2Win(died=false){
+  clearInterval(shooterInterval);
+  // clean up keyboard listeners
+  window.__shootFn=null;
+  document.body.style.background='var(--bg)';
+  title.textContent=died?'Keep going, Aditi! ❤️':'You reached Aman! ❤️';
+  const rhtml=earnedRewards.map(r=>`<div style="padding:3px 0">🎁 ${r}</div>`).join('');
+  fadeIn();
+  game.innerHTML=`
+    <div class="lbadge">${died?'Try again! 💪':'Level 2 Complete! 🎉'}</div>
+    <div style="font-size:2.5rem;margin:8px 0">${died?'💪':'🎉'}</div>
+    <h2>${died?'Aditi, you can do it!':'You survived!'}</h2>
+    <p>You earned <strong style="color:var(--pink)">${earnedRewards.length} rewards</strong> from Aman 💋</p>
+    <div style="background:#fff0f3;border-radius:12px;padding:12px;margin:10px 0;font-size:0.86rem;color:#666;max-height:160px;overflow-y:auto">${rhtml||'<span style="color:#bbb">Play more to earn rewards!</span>'}</div>
+    <div style="margin-top:10px">
+      <button onclick="startLevel2()">🔄 Play Again & Win More</button>
+      <button class="btn-primary" onclick="startLevel3()">Level 3 — Memories ➡️</button>
+    </div>`;
+}
+
+// ════════════════════════════════════════════
+//  LEVEL 3 — MEMORIES
+// ════════════════════════════════════════════
+const QS=[
+  {q:"What is Aman's favourite?",opts:["Aditi ❤️","Paneer","Tomato chutney"],correct:"Aditi ❤️",reward:"Aman himself 💕",key:"Aman Fav"},
+  {q:"How did we meet?",opts:["Instagram","Facebook","Snapchat"],correct:"Instagram",reward:null,key:"How We Met"},
+  {q:"What is our anniversary date?",opts:["14 October 2023","13 October 2023","22 November 2024"],correct:"14 October 2023",reward:null,key:"Anniversary"},
+  {q:"What was the topic of our first fight?",opts:["Lip kiss","Romance","Insecurities"],correct:"Lip kiss",reward:"a lip kiss 💋",key:"First Fight"},
+  {q:"Which is your favourite song from Aman?",opts:["Chulbuli ladki","O meri adu, tu mera bachha hai","Tu hi radha mori"],correct:null,key:"Fav Song"},
+  {q:"Which name gives you goosebumps?",opts:["Betu","Bubu","Baby","Adu","Jaan","Gadhi"],correct:null,key:"Goosebumps Name"},
+  {q:"What was our worst fight?",type:"text",key:"Worst Fight",after:"Aman loves you and will never repeat these mistakes. Ever. ❤️"},
+  {q:"Our first intimate moment — what did you actually feel? (Please baby I love you na 🥺)",type:"text",key:"First Intimate Feeling"},
+  {q:"Will you marry Aman?",opts:["Yes 💍","Yes 💍"],correct:null,key:"Marry Aman"},
+  {q:"Anything you eagerly want to say to that idiot? 😏",type:"text",key:"Message to Aman"},
+  {q:"What would you tell your kids about Aman always?",type:"text",key:"Kids About Aman"},
+  {q:"I love you ❤️",type:"text",key:"I Love You Reply"},
 ];
 
-let qIndex=0;
+let qIdx=0;
 
-function level3(){
-  document.body.style.background="#fff";
-  ask();
+function startLevel3(){
+  document.body.style.background='var(--bg)';
+  title.textContent='Our Memories ❤️';
+  qIdx=0; askQ();
 }
 
-function ask(){
-  if(qIndex>=questions.length){
-    finishScreen(); return;
-  }
-  let q=questions[qIndex];
-  title.innerText="Our Memories ❤️";
+function askQ(){
+  if(qIdx>=QS.length){toLevel4();return;}
+  const q=QS[qIdx];
+  const dots=QS.map((_,i)=>`<span class="${i<qIdx?'done':''}"></span>`).join('');
+  fadeIn();
 
-  if(q[1]){
-    game.innerHTML=`<h3>${q[0]}</h3>`;
-    q[1].forEach(opt=>{
-      game.innerHTML+=`
-        <button onclick='pick(${JSON.stringify(q[0])},${JSON.stringify(opt)},${JSON.stringify(q[2]||"")})'>
-          ${opt}
-        </button>`;
-    });
-  }else{
+  if(q.type==='text'){
     game.innerHTML=`
-      <h3>${q[0]}</h3>
-      <textarea id="txt"></textarea><br><br>
-      <button onclick='textAnswer(${JSON.stringify(q[0])})'>Submit</button>
-    `;
+      <div class="lbadge">Memories — ${qIdx+1} / ${QS.length}</div>
+      <div class="prog">${dots}</div>
+      <h3>${q.q}</h3>
+      <textarea id="txt" placeholder="Write here…"></textarea>
+      <br><br>
+      <button class="btn-primary" onclick="textAns()">Submit ➡️</button>`;
+  } else {
+    const btns=q.opts.map(o=>`<button onclick='pickAns(${JSON.stringify(o)})'>${o}</button>`).join('');
+    game.innerHTML=`
+      <div class="lbadge">Memories — ${qIdx+1} / ${QS.length}</div>
+      <div class="prog">${dots}</div>
+      <h3>${q.q}</h3>
+      <div style="margin-top:8px">${btns}</div>`;
   }
 }
 
-function pick(question,answer,reward){
-  save(question,answer);
-  if(reward){
-    popup("Aman will give you "+reward);
-    save("Special Reward",reward);
+function pickAns(answer){
+  const q=QS[qIdx];
+  if(q.correct&&answer!==q.correct){popup("Hmm… try again! 😄");return;}
+  save(q.key,answer);
+  if(q.reward){rewardToast("You earned: "+q.reward);save("Reward_"+q.key,q.reward);}
+  qIdx++; askQ();
+}
+
+function textAns(){
+  const q=QS[qIdx];
+  const val=document.getElementById('txt').value.trim();
+  if(!val){popup("Kuch to likho 😄");return;}
+  save(q.key,val);
+  if(q.after){
+    fadeIn();
+    game.innerHTML=`
+      <div style="padding:14px">
+        <div style="font-size:2.5rem">❤️</div>
+        <p style="font-size:1.05rem;font-weight:700;color:var(--pink);margin:14px 0;line-height:1.5">${q.after}</p>
+        <button class="btn-primary" onclick="nextAfterMsg()">Next ➡️</button>
+      </div>`;
+    return;
   }
-  qIndex++; ask();
+  qIdx++; askQ();
 }
+function nextAfterMsg(){ qIdx++; askQ(); }
 
-function textAnswer(question){
-  save(question,txt.value);
-  if(question==="Worst fight?")
-    alert("Aman loves you and will never repeat these mistakes.");
-  qIndex++; ask();
-}
-
-// ================= FINAL =================
-function finishScreen(){
-  title.innerText="Thank you baby ❤️";
+function toLevel4(){
+  fadeIn();
   game.innerHTML=`
-    <h3>Finish & Send Results</h3>
-    <button onclick="finishGame()">Finish & Send to Aman</button>
-  `;
+    <div class="lbadge">Level 3 Complete 🎉</div>
+    <div style="font-size:2.5rem;margin:8px 0">💌</div>
+    <h2>Memories saved, baby ❤️</h2>
+    <p style="margin-bottom:16px">Now find Aman behind one of the doors…</p>
+    <button class="btn-primary" onclick="startLevel4()">Level 4 — Find Aman 🚪</button>`;
 }
 
-function finishGame(){
-  let text="❤️ Aman's Memories Game ❤️\n\n";
-  for(let k in data){ text+=k+" : "+data[k]+"\n\n"; }
+// ════════════════════════════════════════════
+//  LEVEL 4 — FIND AMAN
+// ════════════════════════════════════════════
+const DOORS=[
+  {id:'A',label:'Person A',
+   clues:["Short-tempered but deeply caring after anger","Philosophical — thinks about life deeply","Physical touch is his love language","Childish and completely in love","Wants to become truly one with his partner","Has a mole on his chin 🌟","Has a mole near his ear on one cheek 🌟"],
+   isAman:true},
+  {id:'B',label:'Person B',
+   clues:["Very calm, never loses temper","Career above everything else","Words of affirmation is the love language","Doesn't enjoy physical closeness","Keeps emotional distance","No distinctive marks on face"],
+   isAman:false},
+  {id:'C',label:'Person C',
+   clues:["Emotionally unavailable","Quality time is the love language","Acts romantic but not deep","Doesn't believe in marriage","Gaming is his only passion","No moles anywhere on face"],
+   isAman:false},
+];
 
-  let blob=new Blob([text],{type:"text/plain"});
-  let a=document.createElement("a");
+let revDoors=[false,false,false];
+
+function startLevel4(){
+  title.textContent='Find Aman 💘';
+  revDoors=[false,false,false];
+  renderDoors();
+}
+
+function renderDoors(){
+  fadeIn();
+  const dhtml=DOORS.map((d,i)=>`
+    <div class="door-card" onclick="revealDoor(${i})">
+      <span class="door-icon">${revDoors[i]?(d.isAman?'💘':'🚫'):'🚪'}</span>
+      <div class="door-title">${d.label}</div>
+      ${revDoors[i]
+        ?`<ul class="door-clues">${d.clues.map(c=>`<li>${c}</li>`).join('')}</ul>`
+        :`<p style="font-size:11px;color:#bbb;text-align:center;margin-top:6px">Tap to peek inside…</p>`}
+    </div>`).join('');
+
+  game.innerHTML=`
+    <div class="lbadge">Level 4 — Find Aman</div>
+    <h3>One of these is Aman. Find him! 🔍</h3>
+    <p style="font-size:12px;color:#aaa;margin-bottom:12px">Tap a door for clues, then guess.</p>
+    <div class="doors-wrap">${dhtml}</div>
+    <p style="font-weight:800;margin:10px 0">Who is Aman?</p>
+    ${DOORS.map(d=>`<button onclick="guessDoor('${d.id}',${d.isAman})">${d.label}</button>`).join('')}`;
+}
+
+window.revealDoor=function(i){ revDoors[i]=true; renderDoors(); };
+window.guessDoor=function(id,isAman){
+  if(!isAman){popup("Nope! That's not him 😜 Look for the moles!");return;}
+  amanFound();
+};
+
+function amanFound(){
+  title.textContent='You Found Aman! 💘';
+  fadeIn();
+  game.innerHTML=`
+    <div class="lbadge">You did it! 🎉</div>
+    <div style="font-size:3rem;margin:10px 0">💘</div>
+    <h2>You found your Aman! ❤️</h2>
+    <p style="margin-bottom:14px">What do you want to do?</p>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:10px">
+      <button class="btn-primary" style="width:260px;max-width:90vw" onclick="finalChoice('grab')">🤗 Grab Aman & get your rewards</button>
+      <button style="width:260px;max-width:90vw" onclick="finalChoice('love')">💕 Love Aman</button>
+      <button style="width:260px;max-width:90vw" onclick="finalChoice('become')">🫀 Become Aman's completely</button>
+    </div>`;
+}
+
+function finalChoice(choice){
+  save('Final Choice',choice);
+  finishGame(choice);
+}
+
+// ════════════════════════════════════════════
+//  FINISH
+// ════════════════════════════════════════════
+function finishGame(choice){
+  let text='❤️ Aman\'s Memories Game Results ❤️\n\n';
+  text+=`Date: ${new Date().toLocaleString()}\n\n`;
+  for(let k in SD) text+=`${k}: ${SD[k]}\n\n`;
+
+  // download txt
+  const blob=new Blob([text],{type:'text/plain'});
+  const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
-  a.download="aman-memories.txt";
+  a.download='aman-memories.txt';
   a.click();
 
-  let telegramUsername="Aman_2911"; // CHANGE THIS
-  let link="https://t.me/"+telegramUsername+"?text="+encodeURIComponent(text);
-  setTimeout(()=>window.open(link,"_blank"),1200);
+  // telegram
+  const link='https://t.me/Aman_2911?text='+encodeURIComponent(text);
+  setTimeout(()=>window.open(link,'_blank'),1200);
+
+  title.textContent='Thank you baby ❤️';
+  fadeIn();
+  game.innerHTML=`
+    <div style="padding:16px">
+      <div style="font-size:3rem;margin-bottom:10px">❤️</div>
+      <h2>Aman loves you so much</h2>
+      <p style="margin:10px 0;color:#888">Your answers are with Aman now 💌</p>
+      <p style="font-size:1.35rem;color:var(--pink);font-weight:800;margin-top:10px">He's waiting for you 🥺</p>
+    </div>`;
 }
 
-// START
+// ─── START ───
 level1();
 </script>
-
 </body>
 </html>
