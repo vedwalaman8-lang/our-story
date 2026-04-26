@@ -77,8 +77,117 @@ function answer1(ans){
     game.innerHTML = `
       <h3>Correct ❤️</h3>
       <img src="media/images (2).jpg" width="90%"><br><br>
-      <button onclick="songs()">Next</button>
+      <button onclick="askName()">Next</button>
     `;
+  }
+}
+
+  function askName(){
+  let showedPopup = false;
+
+  game.innerHTML = `
+    <h3>What is your name?</h3>
+    <input id="nameInput" placeholder="Type your name ❤️" style="padding:8px"><br><br>
+    <button onclick="saveName()">Next</button>
+  `;
+
+  const input = document.getElementById("nameInput");
+
+  input.addEventListener("focus", () => {
+    if(!showedPopup){
+      showedPopup = true;
+      popup("tumhare gharwaalo ne to naam hi nahi rakha tha na 😏");
+    }
+  });
+}
+
+function saveName(){
+  const name = document.getElementById("nameInput").value;
+  save("Name", name);
+  startLyrics();   // ✅ go to lyric game
+}
+``
+  let lyricIndex = 0;
+let fillCount = 0;
+
+const lyricsData = [
+  {
+    text: "Ek chulbuli si _____ thi,<br>jo aaj yu _____ hai ji",
+    blanks: ["ladki", "rahi"],
+    options: ["ladki", "rahi", "moti", "khush"],
+    song: "music/chulbuli ladki.mpeg"
+  },
+  {
+    text: "Waqt kai dekhe honge,<br>par ek din ham _____ honge",
+    blanks: ["ek"],
+    options: ["sitare", "ek", "alag", "door"],
+    song: "music/algaav.ogg"
+  },
+  {
+    text: "O meri _____ , tu mera _____ hai",
+    blanks: ["adu", "bachha"],
+    options: ["adu", "bachha", "radha", "pyaar"],
+    song: "music/o meri adu.mpeg"
+  }
+];
+  function startLyrics(){
+  lyricIndex = 0;
+  showLyric();
+}
+
+function showLyric(){
+  fillCount = 0;
+  const l = lyricsData[lyricIndex];
+
+  let display = l.text;
+  l.blanks.forEach(() => {
+    display = display.replace("_____", "<span class='blank'>_____</span>");
+  });
+
+  game.innerHTML = `
+    <h3>Complete the Lyrics 🎵</h3>
+    <p>${display}</p>
+    <div id="options"></div>
+  `;
+
+  const optDiv = document.getElementById("options");
+  l.options.forEach(word => {
+    const b = document.createElement("button");
+    b.innerText = word;
+    b.onclick = () => checkLyric(word);
+    optDiv.appendChild(b);
+  });
+}
+
+function checkLyric(word){
+  const l = lyricsData[lyricIndex];
+  const blanks = document.querySelectorAll(".blank");
+
+  if(word === l.blanks[fillCount]){
+    blanks[fillCount].innerText = word;
+    fillCount++;
+
+    if(fillCount === l.blanks.length){
+      playLyricSong(l.song);
+    }
+  } else {
+    popup("Socho thoda 😛");
+  }
+
+function playLyricSong(songPath){
+  game.innerHTML = `
+    <h3>Listen ❤️</h3>
+    <audio controls src="${song
+    <button onclick="nextLyric()">Next</button>
+  `;
+}
+
+function nextLyric(){
+  lyricIndex++;
+  if(lyricIndex < lyricsData.length){
+    showLyric();
+  } else {
+    video(); // ✅ after O meri adu → video
   }
 }
 
