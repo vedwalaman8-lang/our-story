@@ -123,7 +123,7 @@ const lyricsData = [
     song: "music/algaav.ogg"
   },
   {
-    text: "O meri _____ , tu mera _____ hai",
+    text: "O meri adu , tu mera _____ hai",
     blanks: ["bachha"],
     options: ["adu", "bachha", "radha", "pyaar"],
     song: "music/o meri adu.mpeg"
@@ -167,8 +167,10 @@ function checkLyric(word){
     blanks[fillCount].innerText = word;
     fillCount++;
 
-    if(fillCount === l.blanks.length){
-      playLyricSong(l.song);
+    if(fillCount >= l.blanks.length){
+      setTimeout(() => {
+        playLyricSong(l.song);
+      }, 300);
     }
   } else {
     popup("Socho thoda 😛");
@@ -184,11 +186,13 @@ function playLyricSong(songPath){
 }
 
 function nextLyric(){
+  fillCount = 0;                 // 🔧 RESET
   lyricIndex++;
+
   if(lyricIndex < lyricsData.length){
     showLyric();
   } else {
-    video(); // ✅ after O meri adu → video
+    video();                     // after O meri adu
   }
 }
 ``
