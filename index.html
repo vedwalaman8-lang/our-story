@@ -186,16 +186,20 @@ function checkLyric(word){
 function playLyricSong(songPath){
   game.innerHTML = `
     <h3>Listen ❤️</h3>
+
     <audio id="lyricAudio" controls preload="auto">
-      <source src="${songPath}" type="audio/mpeg">
+      <source src="${songPath}">
+      Your browser does not support the audio element.
     </audio>
+
     <br><br>
     <button id="nextBtn">Next</button>
   `;
 
   const audio = document.getElementById("lyricAudio");
-  audio.load();                 // 🔴 THIS IS THE KEY
-  audio.play().catch(()=>{});   // attempt autoplay safely
+
+  audio.load();               // ✅ force reload
+  audio.play().catch(()=>{}); // ✅ safe autoplay attempt
 
   document.getElementById("nextBtn").onclick = nextLyric;
 }
