@@ -166,20 +166,23 @@ function checkLyric(word){
   const l = lyricsData[lyricIndex];
   const blanks = document.querySelectorAll(".blank");
 
-  if(word === l.blanks[fillCount]){
-    blanks[fillCount].innerText = word;
-    fillCount++;
-
-    if(fillCount >= l.blanks.length){
-      setTimeout(() => {
-        playLyricSong(l.song);
-      }, 300);
-    }
-  } else {
+  if(word !== l.blanks[fillCount]) {
     popup("Socho thoda 😛");
+    return;
+  }
+
+  blanks[fillCount].innerText = word;
+  fillCount++;
+
+  // lock once per lyric
+  if (fillCount === l.blanks.length) {
+    // prevent double-trigger
+    setTimeout(() => {
+      playLyricSong(l.song);
+    }, 200);
   }
 }
-
+``
 function playLyricSong(songPath){
   game.innerHTML = `
     <h3>Listen ❤️</h3>
