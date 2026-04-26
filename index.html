@@ -263,6 +263,117 @@ audio { width: 100%; margin: 10px 0; border-radius: 8px; }
 .door-clues { font-size: 0.76rem; color: #666; list-style: none; padding: 0; }
 .door-clues li { padding: 2px 0; }
 .door-clues li::before { content: '• '; color: var(--pink); }
+
+/* ── LEVEL 4 — INTIMATE CONSTELLATION ── */
+#starCanvas { display:block; width:100%; border-radius:16px; }
+
+.love-letter-wrap {
+  background: linear-gradient(135deg, #1a0a1e, #2d0a1a);
+  border-radius: 20px;
+  padding: 22px 18px;
+  margin: 10px 0;
+  border: 1px solid rgba(255,77,109,0.3);
+  position: relative;
+  overflow: hidden;
+}
+.love-letter-wrap::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(255,77,109,0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+.love-letter-line {
+  font-size: 1.02rem;
+  color: #ffd6e0;
+  font-weight: 700;
+  line-height: 1.9;
+  position: relative;
+  z-index: 1;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.love-letter-line.visible { opacity: 1; transform: translateY(0); }
+
+.heartbeat-btn {
+  animation: heartbeat 0.9s infinite;
+}
+@keyframes heartbeat {
+  0%,100% { transform: scale(1); }
+  50%      { transform: scale(1.07); }
+}
+
+.memory-card {
+  background: linear-gradient(135deg, #fff0f3, #ffe4ec);
+  border: 2px solid var(--light-pink);
+  border-radius: 18px;
+  padding: 18px 14px;
+  margin: 8px 0;
+  transition: all 0.3s;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.memory-card:hover {
+  transform: scale(1.03);
+  border-color: var(--pink);
+  box-shadow: 0 8px 28px rgba(255,77,109,0.25);
+}
+.memory-card::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(255,77,109,0.18) 0%, transparent 60%);
+  pointer-events: none;
+}
+.memory-emoji { font-size: 2rem; margin-bottom: 6px; }
+.memory-title { font-weight: 800; font-size: 0.95rem; color: var(--deep); }
+.memory-sub { font-size: 0.8rem; color: #888; margin-top: 3px; }
+
+.typing-cursor::after {
+  content: '|';
+  animation: blink 0.7s infinite;
+  color: var(--pink);
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+.shimmer-text {
+  background: linear-gradient(90deg, var(--deep), var(--pink), #ff9eb5, var(--deep));
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 2.5s infinite linear;
+  font-weight: 800;
+  font-size: 1.3rem;
+}
+@keyframes shimmer { 0%{background-position:0%} 100%{background-position:300%} }
+
+.floating-hearts {
+  position: fixed; inset: 0; pointer-events: none; z-index: 8888; overflow: hidden;
+}
+.fh { position: absolute; bottom: -30px; font-size: 1.4rem; animation: fhRise linear forwards; }
+@keyframes fhRise {
+  0%   { transform: translateX(0) scale(0.6); opacity: 0.8; }
+  100% { transform: translateX(var(--dx)) translateY(-110vh) scale(1.1); opacity: 0; }
+}
+
+/* Pulse ring */
+.pulse-ring {
+  display: inline-block;
+  position: relative;
+}
+.pulse-ring::before, .pulse-ring::after {
+  content: '';
+  position: absolute; inset: -8px;
+  border-radius: 50%;
+  border: 2px solid var(--pink);
+  animation: ringPulse 1.6s infinite ease-out;
+}
+.pulse-ring::after { animation-delay: 0.8s; }
+@keyframes ringPulse {
+  0%   { transform: scale(0.8); opacity: 0.9; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
 </style>
 </head>
 <body>
@@ -271,6 +382,7 @@ audio { width: 100%; margin: 10px 0; border-radius: 8px; }
   <div id="game"></div>
 </div>
 <div id="popup" class="hidden"></div>
+<div class="floating-hearts" id="fhContainer"></div>
 
 <script>
 // ════════════════════════════════════════════
@@ -305,8 +417,24 @@ function fadeIn(){
   requestAnimationFrame(()=>{ game.style.animation='cardIn 0.35s ease both'; });
 }
 
+function launchFloatingHearts(n=8){
+  const c=document.getElementById('fhContainer');
+  for(let i=0;i<n;i++){
+    setTimeout(()=>{
+      const h=document.createElement('div');
+      h.className='fh';
+      h.textContent=['❤️','💕','💗','💓','💖','🌸'][Math.floor(Math.random()*6)];
+      h.style.left=Math.random()*100+'vw';
+      h.style.setProperty('--dx',(Math.random()-0.5)*80+'px');
+      h.style.animationDuration=(2.5+Math.random()*2)+'s';
+      c.appendChild(h);
+      setTimeout(()=>h.remove(),4500);
+    },i*160);
+  }
+}
+
 // ════════════════════════════════════════════
-//  LEVEL 1 — HISTORY
+//  LEVEL 1 — HISTORY QUIZ
 // ════════════════════════════════════════════
 function level1(){
   title.textContent='A Little History Quiz ❤️';
@@ -341,10 +469,11 @@ function askName(){
     <h3>What is your name? 😊</h3>
     <input type="text" id="ni" placeholder="Type your name ❤️">
     <br><br>
-    <button class="btn-primary" onclick="saveName()">Next ➡️</button>`;
+    <button class="btn-primary" id="nameBtn">Next ➡️</button>`;
   document.getElementById('ni').addEventListener('focus',()=>{
     if(!shown){shown=true;popup("tere gharwaalo ne to naam hi nahi rakha tha na 😏");}
   });
+  document.getElementById('nameBtn').onclick=saveName;
 }
 function saveName(){
   const v=document.getElementById('ni').value.trim();
@@ -385,18 +514,27 @@ function belongDone(){
 }
 
 // ════════════════════════════════════════════
-//  LYRICS
+//  LYRICS  — FIXED: song playback & next btn
 // ════════════════════════════════════════════
 const LYRICS=[
-  {text:"Ek chulbuli si _____ thi,<br>jo aaj yu hai ji",
-   blanks:["ladki"],opts:["ladki","rahi","moti","khush"],
-   song:"music/chulbuli ladki.mpeg"},
-  {text:"Waqt kai dekhe honge,<br>par ek din ham _____ honge",
-   blanks:["ek"],opts:["sitare","ek","alag","door"],
-   song:"music/algaav.ogg"},
-  {text:"O meri adu, tu mera _____ hai",
-   blanks:["bachha"],opts:["adu","bachha","radha","pyaar"],
-   song:"music/o meri adu.mpeg"}
+  {
+    text:"Ek chulbuli si _____ thi,<br>jo aaj yu <span style='opacity:0.5'>[rahi]</span> hai ji",
+    blanks:["ladki"],
+    opts:["ladki","rahi","moti","khush"],
+    song:"music/chulbuli ladki.mpeg"
+  },
+  {
+    text:"Waqt kai dekhe honge,<br>par ek din ham _____ honge",
+    blanks:["ek"],
+    opts:["sitare","ek","alag","door"],
+    song:"music/algaav.ogg"
+  },
+  {
+    text:"O meri adu, tu mera _____ hai",
+    blanks:["bachha"],
+    opts:["adu","bachha","radha","pyaar"],
+    song:"music/o meri adu.mpeg"
+  }
 ];
 
 let lyricIdx=0, fillCount=0;
@@ -420,8 +558,8 @@ function showLyric(){
   const od=document.getElementById('opts');
   l.opts.forEach(w=>{
     const b=document.createElement('button');
-    b.textContent=w; b.id = 'ob_' + lyricIdx + '_' + w;
-    b.onclick=()=>checkLyric(w);
+    b.textContent=w; b.id='ob_'+w;
+    b.addEventListener('click',()=>checkLyric(w));
     od.appendChild(b);
   });
 }
@@ -431,21 +569,16 @@ function checkLyric(word){
   if(word!==l.blanks[fillCount]){popup("Socho thoda 😛");return;}
   const sp=document.getElementById('bl'+fillCount);
   if(sp){sp.textContent=word;sp.classList.add('filled');}
-  const ob=document.getElementById('ob_'+lyricIdx+'_'+word);
+  const ob=document.getElementById('ob_'+word);
   if(ob){ob.disabled=true;ob.style.background='#e8f5e9';}
   fillCount++;
-  if (fillCount >= l.blanks.length) {
-  document.querySelectorAll('#opts button').forEach(b => b.disabled = true);
-
-  const playBtn = document.createElement('button');
-  playBtn.className = 'btn-primary';
-  playBtn.textContent = '▶ Play Song';
-  playBtn.onclick = () => playLyricSong(l.song);
-
-  document.getElementById('opts').appendChild(playBtn);
-}
+  if(fillCount>=l.blanks.length){
+    document.querySelectorAll('#opts button').forEach(b=>b.disabled=true);
+    setTimeout(()=>playLyricSong(l.song),500);
+  }
 }
 
+// ── FIXED: build audio in JS, wire button after DOM is ready ──
 function playLyricSong(songPath){
   fadeIn();
   game.innerHTML=`
@@ -453,28 +586,54 @@ function playLyricSong(songPath){
     <h3>Listen ❤️</h3>
     <div id="ah"></div>
     <br>
+    <p id="waitMsg" style="color:#aaa;font-size:0.85rem;margin-bottom:8px">Song is loading… ❤️</p>
     <button id="nb" class="btn-primary" style="display:none">Next ➡️</button>`;
 
-  const au=document.createElement('audio');
-  au.controls=true; au.preload='auto'; au.src=songPath;
-  document.getElementById('ah').appendChild(au);
-  au.load(); au.play().catch(()=>{});
+  // Build audio element in JS — avoids any innerHTML source stripping
+  const au = new Audio();
+  au.controls = true;
+  au.preload  = 'auto';
 
-  setTimeout(()=>{
-    const nb=document.getElementById('nb');
-    if(nb)nb.style.display='inline-block';
-  },1800);
-  document.getElementById('nb').onclick=nextLyric;
+  // Try multiple source extensions as fallback
+  const base = songPath.replace(/\.[^.]+$/, '');
+  const ext  = songPath.match(/\.([^.]+)$/)?.[1] || 'mpeg';
+
+  au.src = songPath;
+  au.style.width  = '100%';
+  au.style.margin = '10px 0';
+
+  document.getElementById('ah').appendChild(au);
+
+  au.load();
+  au.play().catch(()=>{
+    // autoplay blocked — user will press play manually
+  });
+
+  // Show next button after 2s regardless so the player is never stuck
+  const showNext = () => {
+    const wm = document.getElementById('waitMsg');
+    const nb = document.getElementById('nb');
+    if(wm) wm.style.display = 'none';
+    if(nb){
+      nb.style.display = 'inline-block';
+      // Wire onclick HERE, after the element is confirmed to exist
+      nb.addEventListener('click', nextLyric);
+    }
+  };
+
+  // Show button on canplay or after 2 seconds fallback
+  au.addEventListener('canplay', showNext, {once:true});
+  setTimeout(showNext, 2000);
 }
 
 function nextLyric(){
   fillCount=0; lyricIdx++;
-  if(lyricIdx<LYRICS.length)showLyric();
+  if(lyricIdx<LYRICS.length) showLyric();
   else showVideo();
 }
 
 // ════════════════════════════════════════════
-//  VIDEO MESSAGE
+//  VIDEO MESSAGE  — FIXED: button wired in JS
 // ════════════════════════════════════════════
 function showVideo(){
   title.textContent='A message from Aman ❤️';
@@ -482,18 +641,26 @@ function showVideo(){
   game.innerHTML=`
     <div class="lbadge">💌 Message from Aman</div>
     <h3>He recorded this just for you 🥺</h3>
-    <video controls playsinline preload="metadata" style="margin:10px 0">
+    <video id="amanVid" controls playsinline preload="metadata" style="margin:10px 0;width:100%;border-radius:16px">
       <source src="media/WhatsApp Video 2026-04-26 at 5.44.49 PM.mp4" type="video/mp4">
       Your browser does not support video.
     </video>
     <br>
-    <button class="btn-primary" onclick="startLevel2()">Start Level 2 ➡️</button>`;
+    <button id="toL2Btn" class="btn-primary">Start Level 2 ➡️</button>`;
+
+  // Wire button directly — no onclick attribute needed
+  document.getElementById('toL2Btn').addEventListener('click', startLevel2);
+
+  const vid = document.getElementById('amanVid');
+  if(vid) vid.play().catch(()=>{});
 }
 
 // ════════════════════════════════════════════
 //  LEVEL 2 — SHOOTER
+//  FIXED: laser collision uses proximity check
+//  instead of prog>=1 so enemies actually take damage
 // ════════════════════════════════════════════
-// ✏️  EDIT REWARDS HERE:
+// ✏️ EDIT REWARDS HERE:
 const REWARDS=[
   "forehead kiss 💋",
   "eye kiss 👁️",
@@ -515,26 +682,30 @@ const REWARDS=[
 
 let earnedRewards=[], rewardPtr=0;
 let shooterInterval=null;
+let shooterRAF=null;
 
 function startLevel2(){
   document.body.style.background="url('media/cpl.jpg') center/cover no-repeat fixed";
   title.textContent='Reach Your Baby ❤️';
   earnedRewards=[]; rewardPtr=0;
-  if(shooterInterval)clearInterval(shooterInterval);
+  if(shooterInterval) clearInterval(shooterInterval);
+  if(shooterRAF){ cancelAnimationFrame(shooterRAF); shooterRAF=null; }
+  // Clean up old key listeners
+  window.__cleanupShooter && window.__cleanupShooter();
   fadeIn();
   game.innerHTML=`
     <div class="lbadge">Level 2 — Reach Aman</div>
-    <h3>Aditi, eliminate the distractions! 🔫<br><small style="font-weight:600;color:#aaa">Move left/right to dodge — tap to shoot!</small></h3>
+    <h3>Aditi, eliminate the distractions! 🔫<br><small style="font-weight:600;color:#aaa">Tap SHOOT to fire laser at them!</small></h3>
     <div id="shooterWrap">
       <div id="shooterHUD">
-        <span>⏱️ <b id="timerEl">50</b>s</span>
+        <span>⏱️ <b id="timerEl">120</b>s</span>
         <span>💋 <b id="rwCount">0</b> rewards</span>
         <span>❤️ <b id="hpEl">5</b>/5</span>
       </div>
       <canvas id="shooterCanvas"></canvas>
     </div>
     <div style="display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap">
-      <button class="fire-btn" id="fireBtn" onclick="shooterFire()">🔫 SHOOT!</button>
+      <button class="fire-btn" id="fireBtn">🔫 SHOOT!</button>
       <button style="padding:14px 22px;font-size:1rem;border-radius:50px;border:2px solid var(--pink);background:#fff;color:var(--deep);font-weight:800" id="leftBtn">◀ Move</button>
       <button style="padding:14px 22px;font-size:1rem;border-radius:50px;border:2px solid var(--pink);background:#fff;color:var(--deep);font-weight:800" id="rightBtn">Move ▶</button>
     </div>
@@ -550,7 +721,6 @@ function initShooter(){
   const H=Math.min(310,Math.round(window.innerHeight*0.38));
   canvas.width=W; canvas.height=H;
   const ctx=canvas.getContext('2d');
-
   const GROUND=H-20;
 
   const ENEMY_DEFS=[
@@ -560,7 +730,7 @@ function initShooter(){
     {name:'Simran',  hp:3,gender:'f',color:'#ff6eb4',dmg:1},
     {name:'Surya',   hp:4,gender:'m',color:'#1e88e5',dmg:2},
     {name:'Maahi',   hp:5,gender:'f',color:'#e040fb',dmg:2},
-    {name:'Vanshika',hp:8,gender:'f',color:'#e91e63',dmg:2}, // toughest
+    {name:'Vanshika',hp:8,gender:'f',color:'#e91e63',dmg:2},
   ];
 
   const shuf=arr=>[...arr].sort(()=>Math.random()-0.5);
@@ -576,58 +746,75 @@ function initShooter(){
       hitFlash:0};
   }
 
-  // ── player state ──
   const PLAYER_MAX_HP=5;
-  let player={
-    x:60, y:GROUND,
-    vx:0, speed:3.2,
-    hp:PLAYER_MAX_HP,
-    hitFlash:0,
-    bobT:0
-  };
-let lastPlayerHit = 0;   // ✅ hit cooldown timer
+  let player={x:60,y:GROUND,speed:3.2,hp:PLAYER_MAX_HP,hitFlash:0,bobT:0};
   let enemies=[newEnemy()];
-  let score=0, gameOver=false, gameWon=false;
-  let particles=[], lasers=[], dmgNumbers=[];
-  let timeLeft=50;
+  let score=0,gameOver=false,gameWon=false;
+  let particles=[],lasers=[],dmgNumbers=[];
+  let timeLeft=120;
   let lastEnemySpawn=0;
+  let active=true; // flag to stop RAF
 
-  // controls
+  // ── Controls ──
   const keys={};
-  window.addEventListener('keydown',e=>{
-    keys[e.code]=true;
-    if(e.code==='Space'){e.preventDefault();shoot();}
-  });
-  window.addEventListener('keyup',e=>{ keys[e.code]=false; });
+  function onKeyDown(e){ keys[e.code]=true; if(e.code==='Space'){e.preventDefault();shoot();} }
+  function onKeyUp(e){ keys[e.code]=false; }
+  window.addEventListener('keydown',onKeyDown);
+  window.addEventListener('keyup',onKeyUp);
 
-  // touch move buttons
+  const fb=document.getElementById('fireBtn');
   const lb=document.getElementById('leftBtn');
   const rb=document.getElementById('rightBtn');
+  if(fb) fb.addEventListener('click',shoot);
   if(lb){
     lb.addEventListener('pointerdown',()=>keys['ArrowLeft']=true);
-    lb.addEventListener('pointerup',()=>keys['ArrowLeft']=false);
+    lb.addEventListener('pointerup',  ()=>keys['ArrowLeft']=false);
     lb.addEventListener('pointerleave',()=>keys['ArrowLeft']=false);
   }
   if(rb){
     rb.addEventListener('pointerdown',()=>keys['ArrowRight']=true);
-    rb.addEventListener('pointerup',()=>keys['ArrowRight']=false);
+    rb.addEventListener('pointerup',  ()=>keys['ArrowRight']=false);
     rb.addEventListener('pointerleave',()=>keys['ArrowRight']=false);
   }
-
-  function shoot(){
-    if(gameOver)return;
-    const target=enemies.find(e=>!e.dead);
-    if(!target)return;
-    const gunX=player.x+14, gunY=player.y-28;
-    lasers.push({x:gunX,y:gunY,tx:target.x,ty:target.y-36,prog:0,done:false,enemyRef:target});
-  }
-
-  window.__shootFn=shoot;
   canvas.addEventListener('click',shoot);
   canvas.addEventListener('touchstart',e=>{e.preventDefault();shoot();},{passive:false});
 
+  // Cleanup fn so restarting doesn't stack listeners
+  window.__cleanupShooter=()=>{
+    active=false;
+    window.removeEventListener('keydown',onKeyDown);
+    window.removeEventListener('keyup',onKeyUp);
+  };
+
+  // ────────────────────────────────────────
+  //  SHOOT — fires a laser projectile
+  //  Laser stores enemy's CURRENT position as target,
+  //  and we do a proximity hit test instead of prog>=1
+  // ────────────────────────────────────────
+  function shoot(){
+    if(gameOver||!active)return;
+    // Find nearest non-dead enemy
+    const alive=enemies.filter(e=>!e.dead);
+    if(!alive.length)return;
+    const target=alive.reduce((a,b)=>Math.abs(b.x-player.x)<Math.abs(a.x-player.x)?b:a);
+    const gunX=player.x+22, gunY=player.y-26;
+    lasers.push({
+      sx:gunX, sy:gunY,
+      tx:target.x, ty:target.y-36,
+      x:gunX, y:gunY,
+      dx:0, dy:0,
+      speed:14,
+      enemyRef:target,
+      hit:false, done:false, trail:[]
+    });
+    // Compute direction vector
+    const dist=Math.hypot(target.x-gunX, (target.y-36)-gunY)||1;
+    lasers[lasers.length-1].dx=(target.x-gunX)/dist*14;
+    lasers[lasers.length-1].dy=((target.y-36)-gunY)/dist*14;
+  }
+
   function giveReward(){
-    if(rewardPtr>=REWARDS.length)return;
+    if(rewardPtr>=REWARDS.length)rewardPtr=0;
     const r=REWARDS[rewardPtr++];
     earnedRewards.push(r);
     save('L2 Reward '+Date.now(),r);
@@ -638,19 +825,18 @@ let lastPlayerHit = 0;   // ✅ hit cooldown timer
 
   // Timer
   shooterInterval=setInterval(()=>{
-    if(gameOver)return;
+    if(!active)return;
     timeLeft--;
     const te=document.getElementById('timerEl');
     if(te)te.textContent=Math.max(0,timeLeft);
-    if(timeLeft%15===0&&timeLeft>0)giveReward();
+    if(timeLeft%20===0&&timeLeft>0)giveReward();
     if(timeLeft<=0){
       clearInterval(shooterInterval);
-      gameOver=true; gameWon=true;
-      setTimeout(level2Win,900);
+      if(!gameOver){gameOver=true;gameWon=true;setTimeout(()=>level2Win(false),900);}
     }
   },1000);
 
-  // ── draw helpers ──────────────────────────
+  // ── Draw helpers ──
   function roundRect(x,y,w,h,r){
     ctx.beginPath();
     ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y);
@@ -681,20 +867,12 @@ let lastPlayerHit = 0;   // ✅ hit cooldown timer
     ctx.fillStyle='rgba(201,24,74,0.3)'; ctx.fillRect(0,GROUND,W,3);
   }
 
-  // ── draw Aditi (female protagonist) ──
   function drawPlayer(){
     ctx.save();
     const px=player.x, py=player.y;
     const bob=Math.sin(player.bobT)*3;
-
-    // hit flash: tint red when hurt
-    if(player.hitFlash>0){
-      ctx.globalAlpha=0.55+0.45*(player.hitFlash%4<2?1:0);
-    }
-
+    if(player.hitFlash>0) ctx.globalAlpha=0.55+0.45*(player.hitFlash%4<2?1:0);
     ctx.shadowColor='#ff9eb5'; ctx.shadowBlur=16;
-
-    // long hair (behind body) — dark brown flowing strands
     ctx.strokeStyle='#4a2000'; ctx.lineWidth=6;
     for(let i=0;i<4;i++){
       const hx=px-10+i*7;
@@ -703,138 +881,93 @@ let lastPlayerHit = 0;   // ✅ hit cooldown timer
       ctx.bezierCurveTo(hx-5,py-20+bob,hx-8,py-5,hx-6,py+8);
       ctx.stroke();
     }
-
-    // dress / skirt — hot pink
     ctx.shadowColor='#ff4d6d'; ctx.shadowBlur=8;
     ctx.fillStyle='#ff4d6d';
     ctx.beginPath();
-    ctx.moveTo(px-8,py-22+bob);
-    ctx.lineTo(px-16,py+2);
-    ctx.lineTo(px+16,py+2);
-    ctx.lineTo(px+8,py-22+bob);
-    ctx.closePath();
-    ctx.fill();
-
-    // skirt flare
+    ctx.moveTo(px-8,py-22+bob); ctx.lineTo(px-16,py+2);
+    ctx.lineTo(px+16,py+2); ctx.lineTo(px+8,py-22+bob);
+    ctx.closePath(); ctx.fill();
     ctx.fillStyle='#c9184a';
     ctx.beginPath();
-    ctx.moveTo(px-12,py-5+bob);
-    ctx.lineTo(px-20,py+2);
-    ctx.lineTo(px+20,py+2);
-    ctx.lineTo(px+12,py-5+bob);
-    ctx.closePath();
-    ctx.fill();
-
-    // legs
+    ctx.moveTo(px-12,py-5+bob); ctx.lineTo(px-20,py+2);
+    ctx.lineTo(px+20,py+2); ctx.lineTo(px+12,py-5+bob);
+    ctx.closePath(); ctx.fill();
     ctx.fillStyle='#ffb347';
-    ctx.fillRect(px-7,py+2,5,12);
-    ctx.fillRect(px+2,py+2,5,12);
-    // shoes
+    ctx.fillRect(px-7,py+2,5,12); ctx.fillRect(px+2,py+2,5,12);
     ctx.fillStyle='#c9184a';
     ctx.beginPath(); ctx.ellipse(px-4,py+14,5,3,0,0,Math.PI*2); ctx.fill();
     ctx.beginPath(); ctx.ellipse(px+5,py+14,5,3,0,0,Math.PI*2); ctx.fill();
-
-    // skin — neck
     ctx.fillStyle='#ffb347'; ctx.shadowBlur=0;
     ctx.fillRect(px-3,py-28+bob,6,8);
-
-    // head
     ctx.beginPath(); ctx.arc(px,py-36+bob,13,0,Math.PI*2);
     ctx.fillStyle='#ffb347'; ctx.fill();
-
-    // hair on top — long thick dark
     ctx.fillStyle='#3d1500';
     ctx.beginPath(); ctx.ellipse(px,py-46+bob,13,6,0,Math.PI,Math.PI*2); ctx.fill();
-    // ponytail / side bang
     ctx.beginPath();
     ctx.moveTo(px+10,py-44+bob);
     ctx.bezierCurveTo(px+20,py-38+bob,px+22,py-26+bob,px+14,py-18+bob);
     ctx.lineWidth=5; ctx.strokeStyle='#3d1500'; ctx.stroke();
-
-    // eyes — big cute ones
     ctx.fillStyle='#fff';
     ctx.beginPath(); ctx.ellipse(px-5,py-37+bob,4,5,0,0,Math.PI*2); ctx.fill();
     ctx.beginPath(); ctx.ellipse(px+5,py-37+bob,4,5,0,0,Math.PI*2); ctx.fill();
     ctx.fillStyle='#1a0030';
     ctx.beginPath(); ctx.arc(px-5,py-37+bob,2.5,0,Math.PI*2); ctx.fill();
     ctx.beginPath(); ctx.arc(px+5,py-37+bob,2.5,0,Math.PI*2); ctx.fill();
-    // eye shine
     ctx.fillStyle='#fff';
     ctx.beginPath(); ctx.arc(px-4,py-38+bob,1,0,Math.PI*2); ctx.fill();
     ctx.beginPath(); ctx.arc(px+6,py-38+bob,1,0,Math.PI*2); ctx.fill();
-    // lashes
     ctx.strokeStyle='#1a0030'; ctx.lineWidth=1;
     ctx.beginPath(); ctx.moveTo(px-9,py-41+bob); ctx.lineTo(px-11,py-43+bob); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(px+9,py-41+bob); ctx.lineTo(px+11,py-43+bob); ctx.stroke();
-    // smile
     ctx.strokeStyle='#c9184a'; ctx.lineWidth=1.5;
     ctx.beginPath(); ctx.arc(px,py-33+bob,4,0.1,Math.PI-0.1); ctx.stroke();
-    // cheek blush
     ctx.fillStyle='rgba(255,150,150,0.35)';
     ctx.beginPath(); ctx.ellipse(px-9,py-34+bob,4,2.5,0,0,Math.PI*2); ctx.fill();
     ctx.beginPath(); ctx.ellipse(px+9,py-34+bob,4,2.5,0,0,Math.PI*2); ctx.fill();
-
-    // gun arm (right) — pointing right
     ctx.fillStyle='#ffb347';
     ctx.fillRect(px+8,py-24+bob,8,4);
     ctx.fillStyle='#555';
     ctx.fillRect(px+15,py-26+bob,14,7);
-    // laser dot on barrel
     ctx.fillStyle='#ff0040';
     ctx.beginPath(); ctx.arc(px+29,py-23+bob,2.5,0,Math.PI*2); ctx.fill();
-
-    // label
     ctx.shadowBlur=0; ctx.globalAlpha=1;
     ctx.fillStyle='#ffd6e0'; ctx.font='bold 9px Nunito,sans-serif';
     ctx.textAlign='center';
     ctx.fillText('ADITI 💕',px,py+22);
-
-    // player HP bar below name
     const bw=36,bh=4,bx=px-bw/2,by=py+25;
     ctx.fillStyle='#333'; ctx.fillRect(bx,by,bw,bh);
     ctx.fillStyle='#ff4d6d';
     ctx.fillRect(bx,by,bw*(player.hp/PLAYER_MAX_HP),bh);
-
     ctx.restore();
   }
 
   function drawEnemy(e){
     ctx.save();
     const ex=e.x, ey=e.y, sz=36;
-
     if(e.dead){
-      ctx.globalAlpha=e.deadTimer/45;
+      ctx.globalAlpha=Math.max(0,e.deadTimer/45);
       ctx.font='36px serif'; ctx.textAlign='center';
       ctx.fillText('💥',ex,ey-10);
       ctx.restore(); return;
     }
-
     if(e.hitFlash>0){
       ctx.globalAlpha=0.5+0.5*(e.hitFlash%3<1?1:0);
       e.hitFlash--;
     }
-
     ctx.shadowColor=e.color; ctx.shadowBlur=14;
-
-    // head
     ctx.beginPath(); ctx.arc(ex,ey-sz*0.62,sz*0.37,0,Math.PI*2);
     ctx.fillStyle=e.color+'cc'; ctx.fill();
-
     ctx.shadowBlur=0;
-    // eyes (angry)
     ctx.fillStyle='#fff';
     ctx.beginPath(); ctx.arc(ex-6,ey-sz*0.68,3,0,Math.PI*2); ctx.fill();
     ctx.beginPath(); ctx.arc(ex+6,ey-sz*0.68,3,0,Math.PI*2); ctx.fill();
     ctx.fillStyle='#000';
     ctx.beginPath(); ctx.arc(ex-6,ey-sz*0.68,1.5,0,Math.PI*2); ctx.fill();
     ctx.beginPath(); ctx.arc(ex+6,ey-sz*0.68,1.5,0,Math.PI*2); ctx.fill();
-    // angry brows
     ctx.strokeStyle='#fff'; ctx.lineWidth=2;
     ctx.beginPath(); ctx.moveTo(ex-9,ey-sz*0.82); ctx.lineTo(ex-3,ey-sz*0.78); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(ex+9,ey-sz*0.82); ctx.lineTo(ex+3,ey-sz*0.78); ctx.stroke();
-    // frown
     ctx.beginPath(); ctx.arc(ex,ey-sz*0.48,5,Math.PI+0.3,-0.3); ctx.stroke();
-
     ctx.shadowColor=e.color; ctx.shadowBlur=8;
     if(e.gender==='f'){
       ctx.beginPath();
@@ -860,15 +993,12 @@ let lastPlayerHit = 0;   // ✅ hit cooldown timer
       for(let i=0;i<5;i++){
         const hx=ex-sz*0.3+i*sz*0.14;
         ctx.beginPath();
-        ctx.moveTo(hx,ey-sz*0.96);
-        ctx.lineTo(hx+sz*0.07,ey-sz*0.75);
+        ctx.moveTo(hx,ey-sz*0.96); ctx.lineTo(hx+sz*0.07,ey-sz*0.75);
         ctx.lineTo(hx+sz*0.14,ey-sz*0.96);
         ctx.closePath(); ctx.fill();
       }
     }
-
     ctx.shadowBlur=0; ctx.globalAlpha=1;
-    // name tag
     ctx.font='bold 11px Nunito,sans-serif';
     const nw=ctx.measureText(e.name).width+14;
     const ny=ey-sz*1.28;
@@ -876,38 +1006,81 @@ let lastPlayerHit = 0;   // ✅ hit cooldown timer
     roundRect(ex-nw/2,ny-10,nw,21,7); ctx.fill();
     ctx.fillStyle='#fff'; ctx.textAlign='center';
     ctx.fillText(e.name,ex,ny+5);
-
-    // HP bar
     const bw=58,bh=6,bx=ex-bw/2,by=ey+sz*0.85;
     ctx.fillStyle='#333'; ctx.fillRect(bx,by,bw,bh);
     ctx.fillStyle=e.color; ctx.fillRect(bx,by,bw*(e.curHp/e.maxHp),bh);
     ctx.strokeStyle='rgba(255,255,255,0.18)';
     ctx.lineWidth=1; ctx.strokeRect(bx,by,bw,bh);
-
     ctx.restore();
   }
 
-  function drawLasers(){
-    lasers.forEach(l=>{
-      if(l.done)return;
-      l.prog=Math.min(1,l.prog+0.16);
-      const cx=l.x+(l.tx-l.x)*l.prog;
-      const cy=l.y+(l.ty-l.y)*l.prog;
+  // ── FIXED laser drawing & hit detection ──
+  // Lasers now move as projectiles (x,y updated each frame)
+  // Hit test: proximity to enemyRef current position
+  function updateAndDrawLasers(){
+    const toRemove=[];
+    lasers.forEach((l,idx)=>{
+      if(l.done){toRemove.push(idx);return;}
+
+      // Store trail
+      l.trail.push({x:l.x,y:l.y});
+      if(l.trail.length>8)l.trail.shift();
+
+      // Move projectile
+      l.x+=l.dx; l.y+=l.dy;
+
+      // Draw trail
+      for(let i=0;i<l.trail.length-1;i++){
+        const t0=l.trail[i], t1=l.trail[i+1];
+        const alpha=(i/(l.trail.length))*0.6;
+        ctx.save();
+        ctx.globalAlpha=alpha;
+        ctx.strokeStyle='rgba(255,30,80,0.7)'; ctx.lineWidth=3;
+        ctx.shadowColor='#ff0060'; ctx.shadowBlur=10;
+        ctx.beginPath(); ctx.moveTo(t0.x,t0.y); ctx.lineTo(t1.x,t1.y); ctx.stroke();
+        ctx.restore();
+      }
+
+      // Draw projectile head
       ctx.save();
       ctx.shadowColor='#ff0060'; ctx.shadowBlur=20;
-      // beam trail
-      ctx.strokeStyle='rgba(255,30,80,0.88)'; ctx.lineWidth=4;
-      ctx.beginPath(); ctx.moveTo(l.x,l.y); ctx.lineTo(cx,cy); ctx.stroke();
-      // inner bright core
-      ctx.strokeStyle='rgba(255,200,220,0.7)'; ctx.lineWidth=1.5;
-      ctx.beginPath(); ctx.moveTo(l.x,l.y); ctx.lineTo(cx,cy); ctx.stroke();
-      // tip flash
-      ctx.beginPath(); ctx.arc(cx,cy,5,0,Math.PI*2);
+      ctx.beginPath(); ctx.arc(l.x,l.y,5,0,Math.PI*2);
       ctx.fillStyle='#fff5f8'; ctx.fill();
+      ctx.beginPath(); ctx.arc(l.x,l.y,3,0,Math.PI*2);
+      ctx.fillStyle='#ff0040'; ctx.fill();
       ctx.restore();
-      if(l.prog>=1)l.done=true;
+
+      // Hit detection: check proximity to target enemy
+      const e=l.enemyRef;
+      if(e && !e.dead){
+        const dist=Math.hypot(l.x-e.x, l.y-(e.y-36));
+        if(dist<28){
+          // HIT!
+          e.curHp--;
+          e.hitFlash=8;
+          score++;
+          spawnParticles(e.x,e.y-30,e.color,10);
+          dmgNumbers.push({x:e.x,y:e.y-60,text:'-1',color:'#fff',life:24,maxLife:24,size:14});
+          if(score%4===0)giveReward();
+          if(e.curHp<=0){
+            e.dead=true; e.deadTimer=45;
+            popup(e.name+' eliminated! 💥');
+            giveReward();
+            spawnParticles(e.x,e.y-20,e.color,22);
+            setTimeout(()=>{enemies=enemies.filter(x=>x!==e||x.deadTimer>0);},1500);
+          }
+          l.done=true;
+          spawnParticles(l.x,l.y,'#ffaacc',6);
+        }
+      }
+
+      // Out of bounds
+      if(l.x<-20||l.x>W+20||l.y<-20||l.y>H+20) l.done=true;
     });
-    lasers=lasers.filter(l=>!l.done);
+    // Remove done lasers (in reverse so indices stay valid)
+    for(let i=lasers.length-1;i>=0;i--){
+      if(lasers[i].done) lasers.splice(i,1);
+    }
   }
 
   function drawDmgNumbers(){
@@ -928,8 +1101,7 @@ let lastPlayerHit = 0;   // ✅ hit cooldown timer
     for(let i=0;i<n;i++){
       particles.push({x,y,
         vx:(Math.random()-0.5)*7,vy:(Math.random()-0.5)*7,
-        r:2+Math.random()*4,color,
-        life:16+Math.random()*14,maxLife:30});
+        r:2+Math.random()*4,color,life:16+Math.random()*14,maxLife:30});
     }
   }
 
@@ -947,108 +1119,68 @@ let lastPlayerHit = 0;   // ✅ hit cooldown timer
 
   // ── main loop ──
   function loop(){
+    if(!active) return;
+    shooterRAF=requestAnimationFrame(loop);
+
     if(gameOver){
       drawBg(); drawPlayer(); drawParticles(); drawDmgNumbers(); return;
     }
 
-    // player movement
     player.bobT+=0.12;
     if(keys['ArrowLeft']||keys['KeyA'])  player.x=Math.max(20,player.x-player.speed);
     if(keys['ArrowRight']||keys['KeyD']) player.x=Math.min(W*0.55,player.x+player.speed);
 
-    // spawn extra enemy over time
-    const wave=Math.floor((50-timeLeft)/15);
-    if(enemies.filter(e=>!e.dead).length<=wave&&Date.now()-lastEnemySpawn>2000){
+    // Spawn extra enemies over time
+    const wave=Math.floor((120-timeLeft)/30)+1;
+    const aliveCount=enemies.filter(e=>!e.dead).length;
+    if(aliveCount<wave&&Date.now()-lastEnemySpawn>2200){
       enemies.push(newEnemy());
       lastEnemySpawn=Date.now();
     }
 
-    // update enemies
+    // Update enemies
     enemies.forEach(e=>{
-      if(e.dead){e.deadTimer--;return;}
+      if(e.dead){ e.deadTimer--; return; }
       e.x-=e.speed;
 
-      // enemy reaches player zone → deal damage
-     if (
-  e.x < player.x + 22 &&
-  e.x > player.x - 22 &&
-  !e.dead &&
-  Date.now() - lastPlayerHit > 700   // ✅ cooldown check
-) {
-  player.hp = Math.max(0, player.hp - e.dmg);
-  player.hitFlash = 6;
-  lastPlayerHit = Date.now();        // ✅ record hit time
-
-  const hpEl = document.getElementById('hpEl');
-  if (hpEl) hpEl.textContent = player.hp;
-
-  spawnParticles(player.x, player.y - 20, '#ff4d6d', 6);
-
-  if (player.hp <= 0) {
-    gameOver = true;
-    setTimeout(() => level2Win(true), 800);
-  }
-}
-
-      if(e.x<-90){ // went past player — respawn
-        e.x=W+90;
-        e.curHp=e.maxHp;
-      }
-    });
-    // remove fully expired dead enemies
-    enemies=enemies.filter(e=>!e.dead||e.deadTimer>0);
-    if(enemies.length===0)enemies.push(newEnemy());
-
-    // laser vs enemy collision
-    lasers.forEach(l=>{
-      if(l.done||!l.enemyRef)return;
-      const e=l.enemyRef;
-      if (l.prog >= 1 && !e.dead && !l.hit) {
-        l.hit = true;
-        e.curHp--;
-        score++;
-        e.hitFlash=6;
-        spawnParticles(e.x,e.y-20,e.color,8);
-        dmgNumbers.push({x:e.x,y:e.y-50,text:'-1',color:'#fff',
-          life:22,maxLife:22,size:13});
-        if(score%4===0)giveReward();
-        if(e.curHp<=0){
-          e.dead=true; e.deadTimer=40;
-          popup(e.name+' eliminated! 💥');
-          giveReward(); // bonus on kill
-          spawnParticles(e.x,e.y-20,e.color,20);
+      // Enemy reaches player → gradual damage
+      if(Math.abs(e.x-player.x)<26&&!e.dead){
+        player.hp=Math.max(0,player.hp-e.dmg*0.025);
+        player.hitFlash=6;
+        const hpEl=document.getElementById('hpEl');
+        if(hpEl)hpEl.textContent=Math.max(0,Math.ceil(player.hp));
+        spawnParticles(player.x,player.y-20,'#ff4d6d',2);
+        if(player.hp<=0){
+          gameOver=true;
+          setTimeout(()=>level2Win(true),800);
         }
-        l.done=true;
       }
+      // Went off screen → respawn
+      if(e.x<-100){ e.x=W+90; e.curHp=e.maxHp; }
     });
-    lasers=lasers.filter(l=>!l.done);
+    enemies=enemies.filter(e=>!e.dead||e.deadTimer>0);
+    if(enemies.length===0) enemies.push(newEnemy());
 
     // ── render ──
     drawBg();
-    // draw trail/ground decorations
     enemies.forEach(e=>drawEnemy(e));
-    drawLasers();
+    updateAndDrawLasers(); // FIXED — projectile-based with proximity hit
     drawPlayer();
     drawParticles();
     drawDmgNumbers();
 
-    // timer flash when low
     const te=document.getElementById('timerEl');
     if(te&&timeLeft<=10) te.style.color='#ff4d6d';
-
-    requestAnimationFrame(loop);
   }
   loop();
 }
 
-function shooterFire(){ if(window.__shootFn)window.__shootFn(); }
-
 function level2Win(died=false){
   clearInterval(shooterInterval);
-  // clean up keyboard listeners
-  window.__shootFn=null;
+  window.__cleanupShooter && window.__cleanupShooter();
   document.body.style.background='var(--bg)';
   title.textContent=died?'Keep going, Aditi! ❤️':'You reached Aman! ❤️';
+  if(!died) launchFloatingHearts(14);
   const rhtml=earnedRewards.map(r=>`<div style="padding:3px 0">🎁 ${r}</div>`).join('');
   fadeIn();
   game.innerHTML=`
@@ -1058,9 +1190,11 @@ function level2Win(died=false){
     <p>You earned <strong style="color:var(--pink)">${earnedRewards.length} rewards</strong> from Aman 💋</p>
     <div style="background:#fff0f3;border-radius:12px;padding:12px;margin:10px 0;font-size:0.86rem;color:#666;max-height:160px;overflow-y:auto">${rhtml||'<span style="color:#bbb">Play more to earn rewards!</span>'}</div>
     <div style="margin-top:10px">
-      <button onclick="startLevel2()">🔄 Play Again & Win More</button>
-      <button class="btn-primary" onclick="startLevel3()">Level 3 — Memories ➡️</button>
+      <button id="playAgainBtn">🔄 Play Again & Win More</button>
+      <button class="btn-primary" id="toL3Btn">Level 3 — Memories ➡️</button>
     </div>`;
+  document.getElementById('playAgainBtn').addEventListener('click', startLevel2);
+  document.getElementById('toL3Btn').addEventListener('click', startLevel3);
 }
 
 // ════════════════════════════════════════════
@@ -1094,7 +1228,6 @@ function askQ(){
   const q=QS[qIdx];
   const dots=QS.map((_,i)=>`<span class="${i<qIdx?'done':''}"></span>`).join('');
   fadeIn();
-
   if(q.type==='text'){
     game.innerHTML=`
       <div class="lbadge">Memories — ${qIdx+1} / ${QS.length}</div>
@@ -1102,14 +1235,18 @@ function askQ(){
       <h3>${q.q}</h3>
       <textarea id="txt" placeholder="Write here…"></textarea>
       <br><br>
-      <button class="btn-primary" onclick="textAns()">Submit ➡️</button>`;
+      <button class="btn-primary" id="textSubmit">Submit ➡️</button>`;
+    document.getElementById('textSubmit').addEventListener('click', textAns);
   } else {
-    const btns=q.opts.map(o=>`<button onclick='pickAns(${JSON.stringify(o)})'>${o}</button>`).join('');
+    const btns=q.opts.map(o=>`<button class="q-opt">${o}</button>`).join('');
     game.innerHTML=`
       <div class="lbadge">Memories — ${qIdx+1} / ${QS.length}</div>
       <div class="prog">${dots}</div>
       <h3>${q.q}</h3>
       <div style="margin-top:8px">${btns}</div>`;
+    game.querySelectorAll('.q-opt').forEach(btn=>{
+      btn.addEventListener('click',()=>pickAns(btn.textContent));
+    });
   }
 }
 
@@ -1123,7 +1260,9 @@ function pickAns(answer){
 
 function textAns(){
   const q=QS[qIdx];
-  const val=document.getElementById('txt').value.trim();
+  const el=document.getElementById('txt');
+  if(!el){qIdx++;askQ();return;}
+  const val=el.value.trim();
   if(!val){popup("Kuch to likho 😄");return;}
   save(q.key,val);
   if(q.after){
@@ -1132,13 +1271,13 @@ function textAns(){
       <div style="padding:14px">
         <div style="font-size:2.5rem">❤️</div>
         <p style="font-size:1.05rem;font-weight:700;color:var(--pink);margin:14px 0;line-height:1.5">${q.after}</p>
-        <button class="btn-primary" onclick="nextAfterMsg()">Next ➡️</button>
+        <button class="btn-primary" id="afterBtn">Next ➡️</button>
       </div>`;
+    document.getElementById('afterBtn').addEventListener('click',()=>{ qIdx++; askQ(); });
     return;
   }
   qIdx++; askQ();
 }
-function nextAfterMsg(){ qIdx++; askQ(); }
 
 function toLevel4(){
   fadeIn();
@@ -1146,12 +1285,238 @@ function toLevel4(){
     <div class="lbadge">Level 3 Complete 🎉</div>
     <div style="font-size:2.5rem;margin:8px 0">💌</div>
     <h2>Memories saved, baby ❤️</h2>
-    <p style="margin-bottom:16px">Now find Aman behind one of the doors…</p>
-    <button class="btn-primary" onclick="startLevel4()">Level 4 — Find Aman 🚪</button>`;
+    <p style="margin-bottom:16px">Something special is waiting…</p>
+    <button class="btn-primary" id="toL4Btn">Level 4 — Just Us 🌙</button>`;
+  document.getElementById('toL4Btn').addEventListener('click', startLevel4);
 }
 
 // ════════════════════════════════════════════
-//  LEVEL 4 — FIND AMAN
+//  LEVEL 4 — INTIMATE: "Just Us Under the Stars"
+//  A constellation love-letter experience
+// ════════════════════════════════════════════
+const LOVE_MOMENTS=[
+  {
+    emoji:'🌙',
+    title:'Late nights',
+    desc:'Those 2 AM calls where neither of us wanted to hang up…',
+    prompt:'What was running through your mind during those nights?',
+    key:'LateNight'
+  },
+  {
+    emoji:'🤫',
+    title:'Our little world',
+    desc:'The silly nicknames, the inside jokes nobody else gets…',
+    prompt:'Tell me your favourite thing only we two know about us:',
+    key:'InsideWorld'
+  },
+  {
+    emoji:'🫀',
+    title:'That feeling',
+    desc:'The one time you felt completely safe in my arms…',
+    prompt:'Describe that moment in one sentence — I want to re-read it every day:',
+    key:'SafeMoment'
+  },
+  {
+    emoji:'💬',
+    title:'Unspoken words',
+    desc:'Something you have wanted to say but always held back…',
+    prompt:"Say it now. I'm listening. Only me. 🤍",
+    key:'Unspoken'
+  },
+];
+
+let momentIdx=0;
+
+function startLevel4(){
+  title.textContent='Just Us 🌙';
+  document.body.style.background='linear-gradient(135deg,#0a0010,#1a0a20,#0d0015)';
+  momentIdx=0;
+  showStarIntro();
+}
+
+function showStarIntro(){
+  fadeIn();
+  game.innerHTML=`
+    <div class="lbadge">Level 4 — Just Us</div>
+    <canvas id="starCanvas" height="160"></canvas>
+    <div style="margin:12px 0">
+      <div class="shimmer-text">Aman made this just for you 🌙</div>
+    </div>
+    <div class="love-letter-wrap" id="letterWrap">
+      <div class="love-letter-line" id="ll0">Hey Aditi…</div>
+      <div class="love-letter-line" id="ll1">I wrote songs. I wrote poems.</div>
+      <div class="love-letter-line" id="ll2">But nothing captures what you mean to me.</div>
+      <div class="love-letter-line" id="ll3">So I built this little universe — just for us. 🌌</div>
+      <div class="love-letter-line" id="ll4">Let's spend a moment here, together. ❤️</div>
+    </div>
+    <div style="margin-top:14px">
+      <button class="btn-primary heartbeat-btn" id="enterL4Btn">Enter our world 💕</button>
+    </div>`;
+
+  // Draw star canvas
+  const sc=document.getElementById('starCanvas');
+  sc.width=sc.parentElement.clientWidth||320;
+  drawConstellationCanvas(sc);
+
+  // Reveal letter lines with delay
+  [0,1,2,3,4].forEach(i=>{
+    setTimeout(()=>{
+      const el=document.getElementById('ll'+i);
+      if(el) el.classList.add('visible');
+    }, 400+i*700);
+  });
+
+  setTimeout(()=>{
+    const btn=document.getElementById('enterL4Btn');
+    if(btn){ btn.style.opacity='1'; btn.addEventListener('click',()=>showMoment(0)); }
+  },4000);
+  document.getElementById('enterL4Btn').style.opacity='0';
+  document.getElementById('enterL4Btn').style.transition='opacity 0.8s';
+}
+
+function drawConstellationCanvas(canvas){
+  const ctx=canvas.getContext('2d');
+  const W=canvas.width, H=canvas.height;
+  ctx.fillStyle='#090015'; ctx.fillRect(0,0,W,H);
+
+  // Stars
+  const pts=Array.from({length:60},()=>({
+    x:Math.random()*W, y:Math.random()*H,
+    r:0.5+Math.random()*1.5, a:Math.random()*Math.PI*2
+  }));
+
+  // Constellation: two figures (Aman & Aditi) connected by a heart
+  const cx=W/2, cy=H/2;
+  const amanPts=[
+    {x:cx-60,y:cy-20},{x:cx-50,y:cy-40},{x:cx-70,y:cy-40},
+    {x:cx-40,y:cy+10},{x:cx-80,y:cy+10}
+  ];
+  const aditiPts=[
+    {x:cx+60,y:cy-20},{x:cx+50,y:cy-40},{x:cx+70,y:cy-40},
+    {x:cx+40,y:cy+10},{x:cx+80,y:cy+10}
+  ];
+  const heartPts=[{x:cx,y:cy-10},{x:cx-12,y:cy-22},{x:cx+12,y:cy-22},{x:cx,y:cy+8}];
+
+  // Draw constellation lines
+  function drawLines(points,color){
+    ctx.strokeStyle=color; ctx.lineWidth=0.7; ctx.globalAlpha=0.3;
+    ctx.beginPath();
+    points.forEach((p,i)=>i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y));
+    ctx.stroke(); ctx.globalAlpha=1;
+  }
+  drawLines(amanPts,'#aad4ff');
+  drawLines(aditiPts,'#ffaacc');
+  // heart connection
+  ctx.strokeStyle='rgba(255,77,109,0.4)'; ctx.lineWidth=0.8; ctx.globalAlpha=0.5;
+  ctx.beginPath();
+  ctx.moveTo(amanPts[0].x,amanPts[0].y);
+  ctx.lineTo(heartPts[0].x,heartPts[0].y);
+  ctx.lineTo(aditiPts[0].x,aditiPts[0].y);
+  ctx.stroke(); ctx.globalAlpha=1;
+
+  // Draw all star points
+  [...pts,...amanPts,...aditiPts,...heartPts].forEach(p=>{
+    ctx.save();
+    const isCon=[...amanPts,...aditiPts,...heartPts].includes(p);
+    ctx.shadowColor=isCon?(amanPts.includes(p)?'#aad4ff':aditiPts.includes(p)?'#ffaacc':'#ff4d6d'):'#fff';
+    ctx.shadowBlur=isCon?10:4;
+    ctx.fillStyle=isCon?(amanPts.includes(p)?'#ddefff':aditiPts.includes(p)?'#ffd6e0':'#ff4d6d'):'rgba(255,255,255,0.7)';
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,isCon?2.5:p.r||1,0,Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+  });
+
+  // Labels
+  ctx.fillStyle='rgba(170,212,255,0.8)'; ctx.font='bold 9px Nunito,sans-serif'; ctx.textAlign='center';
+  ctx.fillText('✦ AMAN',cx-60,cy+30);
+  ctx.fillStyle='rgba(255,170,204,0.8)';
+  ctx.fillText('✦ ADITI',cx+60,cy+30);
+  ctx.fillStyle='rgba(255,77,109,0.8)';
+  ctx.fillText('❤',cx,cy+28);
+}
+
+function showMoment(idx){
+  if(idx>=LOVE_MOMENTS.length){ showLevel4Finale(); return; }
+  const m=LOVE_MOMENTS[idx];
+  fadeIn();
+  launchFloatingHearts(5);
+
+  game.innerHTML=`
+    <div class="lbadge">Moment ${idx+1} / ${LOVE_MOMENTS.length}</div>
+    <div style="font-size:3.2rem;margin:10px 0;animation:titlePop 0.4s cubic-bezier(.34,1.56,.64,1) both">${m.emoji}</div>
+    <div class="shimmer-text" style="font-size:1.1rem;margin-bottom:6px">${m.title}</div>
+    <div class="love-letter-wrap">
+      <p style="color:#ffd6e0;font-weight:700;font-size:1rem;line-height:1.8;position:relative;z-index:1">${m.desc}</p>
+    </div>
+    <p style="font-weight:800;color:var(--deep);margin:14px 0 6px">${m.prompt}</p>
+    <textarea id="mtxt" placeholder="Write here, only Aman will read this… 🤍" style="min-height:90px"></textarea>
+    <br><br>
+    <button class="btn-primary" id="mNext">Send to Aman 💌</button>`;
+
+  document.getElementById('mNext').addEventListener('click',()=>{
+    const val=(document.getElementById('mtxt').value||'').trim();
+    if(!val){popup("Kuch to likho baby 🥺");return;}
+    save(m.key, val);
+    showMomentReaction(m, idx);
+  });
+}
+
+const REACTIONS=[
+  ["Aman is smiling reading this 🥹","He loves you so much it hurts 💗"],
+  ["Only you two in the whole universe 🌌","Nobody else matters. Just you. ❤️"],
+  ["He's keeping this memory forever 📜","This is his favourite thing you've ever said 🌸"],
+  ["Aman heard every word 🤫","He promises to make it all come true 💍"],
+];
+
+function showMomentReaction(m, idx){
+  const r=REACTIONS[idx]||REACTIONS[0];
+  fadeIn();
+  launchFloatingHearts(10);
+  game.innerHTML=`
+    <div style="padding:16px">
+      <div class="pulse-ring" style="display:inline-block;margin:16px 0">
+        <div style="font-size:3rem">❤️</div>
+      </div>
+      <h2 style="margin-top:20px">${r[0]}</h2>
+      <p style="color:#888;margin:8px 0 18px;font-size:0.97rem">${r[1]}</p>
+      <button class="btn-primary" id="nextMomentBtn">${idx<LOVE_MOMENTS.length-1?'Next moment ➡️':'See the finale 🌙'}</button>
+    </div>`;
+  document.getElementById('nextMomentBtn').addEventListener('click',()=>showMoment(idx+1));
+}
+
+function showLevel4Finale(){
+  title.textContent='Forever yours ❤️';
+  fadeIn();
+  launchFloatingHearts(20);
+  document.body.style.background='linear-gradient(135deg,#1a0010,#2d0a20)';
+
+  game.innerHTML=`
+    <div class="lbadge">Level 4 Complete 💕</div>
+    <canvas id="finaleCanvas" height="140"></canvas>
+    <div style="margin:14px 0">
+      <div class="shimmer-text">You both are written in the stars ✨</div>
+    </div>
+    <div class="love-letter-wrap">
+      <p style="color:#ffd6e0;font-weight:700;font-size:1rem;line-height:2;position:relative;z-index:1">
+        Aditi… every song, every lyric, every silly game — it was all for you. <br>
+        You are Aman's favourite adventure. 🌙<br>
+        <span style="color:var(--pink)">Always. Saato janamon tak. ❤️</span>
+      </p>
+    </div>
+    <div style="margin-top:16px">
+      <button class="btn-primary" id="toL5Btn">Level 5 — Find Aman 🚪</button>
+    </div>`;
+
+  const fc=document.getElementById('finaleCanvas');
+  fc.width=fc.parentElement.clientWidth||320;
+  drawConstellationCanvas(fc);
+
+  document.getElementById('toL5Btn').addEventListener('click', startLevel5);
+}
+
+// ════════════════════════════════════════════
+//  LEVEL 5 — FIND AMAN  (was Level 4)
 // ════════════════════════════════════════════
 const DOORS=[
   {id:'A',label:'Person A',
@@ -1167,7 +1532,8 @@ const DOORS=[
 
 let revDoors=[false,false,false];
 
-function startLevel4(){
+function startLevel5(){
+  document.body.style.background='var(--bg)';
   title.textContent='Find Aman 💘';
   revDoors=[false,false,false];
   renderDoors();
@@ -1176,7 +1542,7 @@ function startLevel4(){
 function renderDoors(){
   fadeIn();
   const dhtml=DOORS.map((d,i)=>`
-    <div class="door-card" onclick="revealDoor(${i})">
+    <div class="door-card" id="doorCard${i}">
       <span class="door-icon">${revDoors[i]?(d.isAman?'💘':'🚫'):'🚪'}</span>
       <div class="door-title">${d.label}</div>
       ${revDoors[i]
@@ -1184,23 +1550,32 @@ function renderDoors(){
         :`<p style="font-size:11px;color:#bbb;text-align:center;margin-top:6px">Tap to peek inside…</p>`}
     </div>`).join('');
 
+  const ghtml=DOORS.map(d=>`<button class="guess-btn" data-id="${d.id}" data-aman="${d.isAman}">${d.label}</button>`).join('');
+
   game.innerHTML=`
-    <div class="lbadge">Level 4 — Find Aman</div>
+    <div class="lbadge">Level 5 — Find Aman</div>
     <h3>One of these is Aman. Find him! 🔍</h3>
     <p style="font-size:12px;color:#aaa;margin-bottom:12px">Tap a door for clues, then guess.</p>
     <div class="doors-wrap">${dhtml}</div>
     <p style="font-weight:800;margin:10px 0">Who is Aman?</p>
-    ${DOORS.map(d=>`<button onclick="guessDoor('${d.id}',${d.isAman})">${d.label}</button>`).join('')}`;
-}
+    <div>${ghtml}</div>`;
 
-window.revealDoor=function(i){ revDoors[i]=true; renderDoors(); };
-window.guessDoor=function(id,isAman){
-  if(!isAman){popup("Nope! That's not him 😜 Look for the moles!");return;}
-  amanFound();
-};
+  DOORS.forEach((_,i)=>{
+    const card=document.getElementById('doorCard'+i);
+    if(card) card.addEventListener('click',()=>{ revDoors[i]=true; renderDoors(); });
+  });
+  game.querySelectorAll('.guess-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const isAman=btn.dataset.aman==='true';
+      if(!isAman){popup("Nope! That's not him 😜 Look for the moles!");return;}
+      amanFound();
+    });
+  });
+}
 
 function amanFound(){
   title.textContent='You Found Aman! 💘';
+  launchFloatingHearts(16);
   fadeIn();
   game.innerHTML=`
     <div class="lbadge">You did it! 🎉</div>
@@ -1208,10 +1583,13 @@ function amanFound(){
     <h2>You found your Aman! ❤️</h2>
     <p style="margin-bottom:14px">What do you want to do?</p>
     <div style="display:flex;flex-direction:column;align-items:center;gap:10px">
-      <button class="btn-primary" style="width:260px;max-width:90vw" onclick="finalChoice('grab')">🤗 Grab Aman & get your rewards</button>
-      <button style="width:260px;max-width:90vw" onclick="finalChoice('love')">💕 Love Aman</button>
-      <button style="width:260px;max-width:90vw" onclick="finalChoice('become')">🫀 Become Aman's completely</button>
+      <button class="btn-primary choice-btn" style="width:260px;max-width:90vw" data-choice="grab">🤗 Grab Aman & get your rewards</button>
+      <button class="choice-btn" style="width:260px;max-width:90vw" data-choice="love">💕 Love Aman</button>
+      <button class="choice-btn" style="width:260px;max-width:90vw" data-choice="become">🫀 Become Aman's completely</button>
     </div>`;
+  game.querySelectorAll('.choice-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>finalChoice(btn.dataset.choice));
+  });
 }
 
 function finalChoice(choice){
@@ -1223,29 +1601,29 @@ function finalChoice(choice){
 //  FINISH
 // ════════════════════════════════════════════
 function finishGame(choice){
-  let text='❤️ Aman\'s Memories Game Results ❤️\n\n';
+  let text='❤️ Aman\'s Love Game Results ❤️\n\n';
   text+=`Date: ${new Date().toLocaleString()}\n\n`;
   for(let k in SD) text+=`${k}: ${SD[k]}\n\n`;
 
-  // download txt
   const blob=new Blob([text],{type:'text/plain'});
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
   a.download='aman-memories.txt';
   a.click();
 
-  // telegram
   const link='https://t.me/Aman_2911?text='+encodeURIComponent(text);
   setTimeout(()=>window.open(link,'_blank'),1200);
 
   title.textContent='Thank you baby ❤️';
+  launchFloatingHearts(24);
+  document.body.style.background='linear-gradient(135deg,#1a0010,#2d0a20)';
   fadeIn();
   game.innerHTML=`
     <div style="padding:16px">
       <div style="font-size:3rem;margin-bottom:10px">❤️</div>
-      <h2>Aman loves you so much</h2>
-      <p style="margin:10px 0;color:#888">Your answers are with Aman now 💌</p>
-      <p style="font-size:1.35rem;color:var(--pink);font-weight:800;margin-top:10px">He's waiting for you 🥺</p>
+      <h2 style="color:#ffd6e0">Aman loves you so much</h2>
+      <p style="margin:10px 0;color:#aaa">Your words are with him now 💌</p>
+      <p style="font-size:1.35rem;color:var(--pink);font-weight:800;margin-top:10px">He's waiting. Always. 🥺</p>
     </div>`;
 }
 
