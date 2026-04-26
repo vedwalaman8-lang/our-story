@@ -141,7 +141,10 @@ function showLyric(){
 
   let display = l.text;
   l.blanks.forEach(() => {
-    display = display.replace("_____", "<span class='blank'>_____</span>");
+    display = display.replace(
+      "_____",
+      "<span class='blank'>_____</span>"
+    );
   });
 
   game.innerHTML = `
@@ -180,9 +183,7 @@ function checkLyric(word){
 function playLyricSong(songPath){
   game.innerHTML = `
     <h3>Listen ❤️</h3>
-
     <audio controls src="${songPath}"></audio>
-
     <br><br>
     <button onclick="nextLyric()">Next</button>
   `;
