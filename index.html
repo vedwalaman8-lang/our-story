@@ -186,10 +186,18 @@ function checkLyric(word){
 function playLyricSong(songPath){
   game.innerHTML = `
     <h3>Listen ❤️</h3>
-    <audio controls src="${songPath}"></audio>
+    <audio id="lyricAudio" controls preload="auto">
+      <source src="${songPath}" type="audio/mpeg">
+    </audio>
     <br><br>
-    <button onclick="nextLyric()">Next</button>
+    <button id="nextBtn">Next</button>
   `;
+
+  const audio = document.getElementById("lyricAudio");
+  audio.load();                 // 🔴 THIS IS THE KEY
+  audio.play().catch(()=>{});   // attempt autoplay safely
+
+  document.getElementById("nextBtn").onclick = nextLyric;
 }
 
 function nextLyric(){
