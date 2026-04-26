@@ -420,7 +420,7 @@ function showLyric(){
   const od=document.getElementById('opts');
   l.opts.forEach(w=>{
     const b=document.createElement('button');
-    b.textContent=w; b.id='ob_'+w;
+    b.textContent=w; b.id = 'ob_' + lyricIdx + '_' + w;
     b.onclick=()=>checkLyric(w);
     od.appendChild(b);
   });
@@ -431,13 +431,19 @@ function checkLyric(word){
   if(word!==l.blanks[fillCount]){popup("Socho thoda 😛");return;}
   const sp=document.getElementById('bl'+fillCount);
   if(sp){sp.textContent=word;sp.classList.add('filled');}
-  const ob=document.getElementById('ob_'+word);
+  const ob=document.getElementById('ob_'+lyricIdx+'_'+word);
   if(ob){ob.disabled=true;ob.style.background='#e8f5e9';}
   fillCount++;
-  if(fillCount>=l.blanks.length){
-    document.querySelectorAll('#opts button').forEach(b=>b.disabled=true);
-    setTimeout(()=>playLyricSong(l.song),500);
-  }
+  if (fillCount >= l.blanks.length) {
+  document.querySelectorAll('#opts button').forEach(b => b.disabled = true);
+
+  const playBtn = document.createElement('button');
+  playBtn.className = 'btn-primary';
+  playBtn.textContent = '▶ Play Song';
+  playBtn.onclick = () => playLyricSong(l.song);
+
+  document.getElementById('opts').appendChild(playBtn);
+}
 }
 
 function playLyricSong(songPath){
@@ -579,7 +585,7 @@ function initShooter(){
     hitFlash:0,
     bobT:0
   };
-
+let lastPlayerHit = 0;   // ✅ hit cooldown timer
   let enemies=[newEnemy()];
   let score=0, gameOver=false, gameWon=false;
   let particles=[], lasers=[], dmgNumbers=[];
@@ -963,18 +969,26 @@ function initShooter(){
       e.x-=e.speed;
 
       // enemy reaches player zone → deal damage
-      if(e.x<player.x+22&&e.x>player.x-22&&!e.dead){
-        player.hp=Math.max(0,player.hp-e.dmg*0.03); // gradual damage while close
-        player.hitFlash=6;
-        const hpEl=document.getElementById('hpEl');
-        if(hpEl)hpEl.textContent=Math.ceil(player.hp);
-        spawnParticles(player.x,player.y-20,'#ff4d6d',3);
+     if (
+  e.x < player.x + 22 &&
+  e.x > player.x - 22 &&
+  !e.dead &&
+  Date.now() - lastPlayerHit > 700   // ✅ cooldown check
+) {
+  player.hp = Math.max(0, player.hp - e.dmg);
+  player.hitFlash = 6;
+  lastPlayerHit = Date.now();        // ✅ record hit time
 
-        if(Math.ceil(player.hp)<=0){
-          gameOver=true;
-          setTimeout(()=>level2Win(true),800);
-        }
-      }
+  const hpEl = document.getElementById('hpEl');
+  if (hpEl) hpEl.textContent = player.hp;
+
+  spawnParticles(player.x, player.y - 20, '#ff4d6d', 6);
+
+  if (player.hp <= 0) {
+    gameOver = true;
+    setTimeout(() => level2Win(true), 800);
+  }
+}
 
       if(e.x<-90){ // went past player — respawn
         e.x=W+90;
@@ -989,7 +1003,8 @@ function initShooter(){
     lasers.forEach(l=>{
       if(l.done||!l.enemyRef)return;
       const e=l.enemyRef;
-      if(l.prog>=1&&!e.dead){
+      if (l.prog >= 1 && !e.dead && !l.hit) {
+        l.hit = true;
         e.curHp--;
         score++;
         e.hitFlash=6;
