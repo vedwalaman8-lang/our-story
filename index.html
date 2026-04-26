@@ -43,7 +43,7 @@ textarea{
 <div id="popup" class="popup hidden"></div>
 
 <script>
-// ================= BASIC STORAGE =================
+// ================= STORAGE =================
 let data = JSON.parse(localStorage.getItem("amanData") || "{}");
 
 function save(key,value){
@@ -62,20 +62,20 @@ function popup(msg){
 function level1(){
   title.innerText="Question 1";
   game.innerHTML=`
-  <h3>Who defended Ahmednagar and fought Delhi?</h3>
-  <button onclick="answer1('Razia')">Razia Sultana</button>
-  <button onclick="answer1('Chand')">Chand Bibi</button>
-  <button onclick="answer1('Rani')">Rani Durgavati</button>
-  <button onclick="answer1('Ahilya')">Ahilyabai</button>
+    <h3>Who defended Ahmednagar and fought Delhi?</h3>
+    <button onclick="answer1('Razia')">Razia Sultana</button>
+    <button onclick="answer1('Chand')">Chand Bibi</button>
+    <button onclick="answer1('Rani')">Rani Durgavati</button>
+    <button onclick="answer1('Ahilya')">Ahilyabai</button>
   `;
 }
 
-function answer1(a){
-  if(a==="Chand"){
+function answer1(ans){
+  if(ans==="Chand"){
     save("History Question","Chand Bibi");
     game.innerHTML=`
-      <img src="media/introg<br><br>
-      <button onclick="songs()">Next</button>
+      <h3>Correct ❤️</h3>
+      <img src="media/images (2).jpg" width="90% onclick="songs()">Next</button>
     `;
   }
 }
@@ -84,16 +84,17 @@ function answer1(a){
 function songs(){
   title.innerText="Level 1 – Your Songs";
   game.innerHTML=`
-  <audio controls src="o><br><br>
-  <audio controls</audio><br><br>
-  <audio controls src="music/song3.mp3utton onclick="video()">Next</button>
+    <audio controls src="music/algaav.   <audio controls src="music/chulbuli ladki.m   <audio controls src="music/o><br><br>
+    <button onclick="video()">Next</button>
   `;
 }
 
 // ================= VIDEO =================
 function video(){
   game.innerHTML=`
-  <video width="90%" controls src="media/level1-video.mp4k="level2()">Start Level 2</button>
+    <h3>A message for you ❤️</h3>
+    <video width="90%" controls
+      src="media/WhatsApp Video 2026-04-26 at 5.44tton onclick="level2()">Start Level 2</button>
   `;
 }
 
@@ -102,21 +103,35 @@ let rewards=[
   "forehead kiss",
   "warm hug",
   "song by Aman",
-  "poem by Aman"
-  // 👉 YOU CAN ADD / CHANGE REWARDS HERE
+  "poem by Aman",
+  "eye kiss",
+  "hand kiss",
+  "lip kiss",
+  "cheek kiss",
+  "waist kiss",
+  "waist kiss + measurement + lick"
+  "back kiss"
+  "full body massage"
+  "complete imagination"
+  "feet kiss"
+  
 ];
 
 function level2(){
-  document.body.style.background="url(media/level2-bg.jpg) center/cover";
+  document.body.style.background =
+    "url('media/cpl.jpg') center/cover no-repeat";
+
   title.innerText="Reach Your Baby ❤️";
-  game.innerHTML=`
-  <h2 id="timer">120</h2>
-  <audio autoplay loop src="music/level2-music.mp320;
+  game.innerHTML=`<h2 id="timer">120</h2>`;
+
+  let time=120;
+  let timer=document.getElementById("timer");
+
   let interval=setInterval(()=>{
     time--;
     timer.innerText=time;
 
-    if(time%20===0){
+    if(time%20===0 && time>0){
       let r=rewards[Math.floor(Math.random()*rewards.length)];
       save("Reward "+Date.now(),r);
       popup("Aman will give you "+r);
@@ -131,18 +146,18 @@ function level2(){
 
 // ================= LEVEL 3 =================
 let questions=[
-["Aman's favourite?",["Aditi","Paneer","Tomato chutney"]],
-["How did we meet?",["Instagram","Facebook","Snapchat"]],
-["Anniversary date?",["14 October 2023","13 October 2023","22 November 2024"]],
-["Topic of first fight?",["Lip kiss","Romance","Insecurities"],"lip kiss"],
-["Favourite song from Aman?",["Chulbuli ladki","O meri adu","Tu hi radha mori"]],
-["Name that gives goosebumps?",["Betu","Bubu","Baby","Adu","Jaan","Gadhi"]],
-["Worst fight?",null],
-["First moment you actually felt something?",null],
-["Will you marry Aman?",["Yes","Yes"]],
-["Anything you want to say to that idiot?",null],
-["What should kids know about Aman?",null],
-["I love you",null]
+  ["Aman's favourite?",["Aditi","Paneer","Tomato chutney"]],
+  ["How did we meet?",["Instagram","Facebook","Snapchat"]],
+  ["Anniversary date?",["14 October 2023","13 October 2023","22 November 2024"]],
+  ["Topic of first fight?",["Lip kiss","Romance","Insecurities"],"lip kiss"],
+  ["Favourite song from Aman?",["Chulbuli ladki","O meri adu","Tu hi radha mori"]],
+  ["Name that gives goosebumps?",["Betu","Bubu","Baby","Adu","Jaan","Gadhi"]],
+  ["Worst fight?",null],
+  ["First moment you actually felt something?",null],
+  ["Will you marry Aman?",["Yes","Yes"]],
+  ["Anything you want to say to that idiot?",null],
+  ["What should kids know about Aman?",null],
+  ["I love you",null]
 ];
 
 let qIndex=0;
@@ -154,23 +169,24 @@ function level3(){
 
 function ask(){
   if(qIndex>=questions.length){
-    finishScreen();
-    return;
+    finishScreen(); return;
   }
-
   let q=questions[qIndex];
   title.innerText="Our Memories ❤️";
 
   if(q[1]){
-    game.innerHTML="<h3>"+q[0]+"</h3>";
+    game.innerHTML=`<h3>${q[0]}</h3>`;
     q[1].forEach(opt=>{
-      game.innerHTML+=`<button onclick="pick('${q[0]}','${opt}','${q[2]||""}')">${opt}</button>`;
+      game.innerHTML+=`
+        <button onclick='pick(${JSON.stringify(q[0])},${JSON.stringify(opt)},${JSON.stringify(q[2]||"")})'>
+          ${opt}
+        </button>`;
     });
   }else{
     game.innerHTML=`
       <h3>${q[0]}</h3>
       <textarea id="txt"></textarea><br><br>
-      <button onclick="textAnswer('${q[0]}')">Submit</button>
+      <button onclick='textAnswer(${JSON.stringify(q[0])})'>Submit</button>
     `;
   }
 }
@@ -181,51 +197,45 @@ function pick(question,answer,reward){
     popup("Aman will give you "+reward);
     save("Special Reward",reward);
   }
-  qIndex++;
-  ask();
+  qIndex++; ask();
 }
 
 function textAnswer(question){
   save(question,txt.value);
   if(question==="Worst fight?")
     alert("Aman loves you and will never repeat these mistakes.");
-  qIndex++;
-  ask();
+  qIndex++; ask();
 }
 
-// ================= FINAL SCREEN =================
+// ================= FINAL =================
 function finishScreen(){
   title.innerText="Thank you baby ❤️";
   game.innerHTML=`
-  <h3>Finish & Send Results</h3>
-  <button onclick="finishGame()">Finish & Send to Aman</button>
+    <h3>Finish & Send Results</h3>
+    <button onclick="finishGame()">Finish & Send to Aman</button>
   `;
 }
 
-// ================= DOWNLOAD + TELEGRAM =================
 function finishGame(){
   let text="❤️ Aman's Memories Game ❤️\n\n";
-  for(let k in data){
-    text+=k+" : "+data[k]+"\n\n";
-  }
+  for(let k in data){ text+=k+" : "+data[k]+"\n\n"; }
 
-  // Download text file
   let blob=new Blob([text],{type:"text/plain"});
   let a=document.createElement("a");
   a.href=URL.createObjectURL(blob);
   a.download="aman-memories.txt";
   a.click();
 
-  // Telegram (CHANGE USERNAME BELOW)
-  let telegramUsername="YOUR_TELEGRAM_USERNAME"; // 👈 EDIT THIS
+  let telegramUsername="@Aman_2911"; // CHANGE THIS
   let link="https://t.me/"+telegramUsername+"?text="+encodeURIComponent(text);
-
   setTimeout(()=>window.open(link,"_blank"),1200);
 }
 
-// START GAME
+// START
 level1();
 </script>
 
 </body>
 </html>
+``
+ 
